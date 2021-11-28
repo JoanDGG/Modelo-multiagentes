@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Car
+  - ViewCamera
+  - CarCamera
   layers:
   - Default
   - TransparentFX
