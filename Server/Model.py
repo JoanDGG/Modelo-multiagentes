@@ -10,12 +10,13 @@ class TrafficModel(Model):
         N: Number of agents in the simulation
         height, width: The size of the grid to model
     """
-    def __init__(self, N):
+    def __init__(self):
 
+        self.destinations = []
         dataDictionary = {">" : "Right",
                           "<" : "Left",
-                          "v" : "Down",
-                          "^" : "Up"}
+                          "^" : "Up",
+                          "v" : "Down"}
 
         with open('base.txt') as baseFile:
             lines = baseFile.readlines()
@@ -29,19 +30,31 @@ class TrafficModel(Model):
                 for c, col in enumerate(row):
                     if col in ["v", "^", ">", "<"]:
                         agent = Road(f"r{r*self.width+c}", self, dataDictionary[col])
-                        self.grid.place_agent(agent, (c, self.height - r - 1))
                     elif col in ["S", "s"]:
                         agent = Traffic_Light(f"tl{r*self.width+c}", self, False if col == "S" else True)
-                        self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                     elif col == "#":
                         agent = Obstacle(f"ob{r*self.width+c}", self)
-                        self.grid.place_agent(agent, (c, self.height - r - 1))
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
-                        self.grid.place_agent(agent, (c, self.height - r - 1))
+                        self.destinations.append(agent)
+                    self.grid.place_agent(agent, (c, self.height - r - 1))
 
-        self.num_agents = N
+        # N agent cars = len(self.destinations)
+        # Add the agent to a random empty grid cell
+        for i in range(len(self.destinations)):
+            # Place car where there is no other car and is a Road
+            pos_gen = lambda w, h: (self.random.randrange(w), self.random.randrange(h))
+            pos = pos_gen(self.grid.width, self.grid.height)
+            # Si no hay coche y hay road
+            while (not self.grid.is_cell_empty(pos) and isinstance(self.model.grid[pos], Road)):
+                pos = pos_gen(self.grid.width, self.grid.height)
+            
+            # car.destination = self.destinations[i].pos
+            a = Car(i+1000, self, self.destinations[i].pos)
+            self.schedule.add(a)
+            self.grid.place_agent(a, pos)
+
         self.running = True 
 
     def step(self):
