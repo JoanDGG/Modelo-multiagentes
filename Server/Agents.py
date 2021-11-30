@@ -17,13 +17,17 @@ class Car(Agent):
         """
         super().__init__(unique_id, model)
         self.destination = destination
-        self.next_star = destination
         self.direction = "Left"
+
+        # google_maps_stars(self.pos)
+        self.next_star = destination
+
 
     def step(self):
         """ 
         Determines the new direction it will take, and then moves
         """
+
         # Check if actual cell is destination
         present_in_cell = self.model.grid.get_cell_list_contents([self.pos])
         destination_agent = [agent for agent in present_in_cell if isinstance(agent, Destination)]
@@ -148,7 +152,7 @@ class Road(Agent):
     """
     def __init__(self, unique_id, model, direction = "Left"):
         super().__init__(unique_id, model)
-        self.direction = direction
+        self.direction = direction # Añadir posibles direcciones desde codigo monstruo
         # Añadir varias direcciones para intersecciones
         self.occupied_next = False
 

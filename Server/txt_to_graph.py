@@ -10,6 +10,96 @@ with open("base.txt", "r") as file:
 def print_star_with_graph_ind(ind, nodes_positions_stars):
     print(nodes_positions_stars[ind][1], end=" ")
 
+
+def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars: list, destination_stars: dict):
+    possible_startings = []
+
+    car_rows, car_cols = position
+    
+    for graph_origin_node in graph:
+        origin_node_positions_star = nodes_positions_stars[graph_origin_node]
+        origin_node_positions = origin_node_positions_star[0]
+        for origin_adj_node in graph[graph_origin_node]:
+            try:
+                origin_adj_node_ind = origin_adj_node[0]
+                origin_adj_node_positions_star = nodes_positions_stars[origin_adj_node_ind]
+                origin_adj_node_positions = origin_adj_node_positions_star[0]
+                # Line to the right.
+                # pos cols greater than origin smaller than destiny.
+                if origin_adj_node[1] == "right":
+                    if car_cols > origin_node_positions[0][1] and car_cols < origin_adj_node_positions[0][1]:
+                        if (car_rows - origin_node_positions[0][0] in [0, 1]):
+                            possible_startings += [origin_adj_node_ind]
+                # Line to the left.
+                # pos cols smaller than origin greater than destiny.
+                elif origin_adj_node[1] == "left":
+                    if car_cols < origin_node_positions[0][1] and car_cols > origin_adj_node_positions[0][1]:
+                        if (car_rows - origin_node_positions[0][0] in [0, 1]):
+                            possible_startings += [origin_adj_node_ind]
+                # Line to up.
+                # pos rows smaller than origin greater than destiny.
+                elif origin_adj_node[1] == "up":
+                    if car_rows < origin_node_positions[0][0] and car_rows > origin_adj_node_positions[0][0]:
+                        if (car_cols - origin_node_positions[0][1]) in [0, 1]:
+                            possible_startings += [origin_adj_node_ind]
+                # Line to down.
+                # pos rows greater then origin smaller than destiny
+                elif origin_adj_node[1] == "down":
+                    if car_rows > origin_node_positions[0][0] and car_rows < origin_adj_node_positions[0][0]:
+                        if (car_cols - origin_node_positions[0][1]) in [0, 1]:
+                            possible_startings += [origin_adj_node_ind]
+            except:
+                destiny_star_rows, destiny_star_cols = destination_stars[origin_adj_node_ind]
+                # Line to the right.
+                # pos cols greater than origin smaller than destiny.
+                if origin_adj_node[1] == "right":
+                    if car_cols > origin_node_positions[0][1] and car_cols < destiny_star_rows:
+                        if (car_rows - origin_node_positions[0][0] in [0, 1]):
+                            possible_startings += [origin_adj_node_ind]
+                # Line to the left.
+                # pos cols smaller than origin greater than destiny.
+                elif origin_adj_node[1] == "left":
+                    if car_cols < origin_node_positions[0][1] and car_cols > destiny_star_cols:
+                        if (car_rows - origin_node_positions[0][0] in [0, 1]):
+                            possible_startings += [origin_adj_node_ind]
+                # Line to up.
+                # pos rows smaller than origin greater than destiny.
+                elif origin_adj_node[1] == "up":
+                    if car_rows < origin_node_positions[0][0] and car_rows > destiny_star_rows:
+                        if (car_cols - origin_node_positions[0][1]) in [0, 1]:
+                            possible_startings += [origin_adj_node_ind]
+                # Line to down.
+                # pos rows greater then origin smaller than destiny
+                elif origin_adj_node[1] == "down":
+                    if car_rows > origin_node_positions[0][0] and car_rows < destiny_star_rows:
+                        if (car_cols - origin_node_positions[0][1]) in [0, 1]:
+                            possible_startings += [origin_adj_node_ind]
+
+    print("Los possible startings son ", possible_startings)
+    
+    min_starting_distance_ind = None
+    min_starting_distance = np.inf
+    for possible_starting_ind, possible_starting in enumerate(possible_startings):
+        try:
+            cols_diff = car_cols - nodes_positions_stars[possible_starting][1][1]
+            rows_diff = car_rows - nodes_positions_stars[possible_starting][1][0]
+        except:
+            cols_diff = car_cols - destination_stars[possible_starting][1]
+            rows_diff = car_rows - destination_stars[possible_starting][0]
+
+        distance = np.sqrt((cols_diff ** 2) + (rows_diff ** 2))
+
+        if distance < min_starting_distance:
+            min_starting_distance_ind = possible_starting_ind
+    
+    if min_starting_distance_ind != None:
+        return possible_startings[possible_starting_ind]
+    
+
+            
+
+    
+
 # Detection of intersections that have no traffic lights.
 right_down_mask = np.array([[">", ">"], ["v", "v"]])
 
@@ -308,7 +398,7 @@ for node_ind, node in enumerate(nodes_positions_stars):
             min_distance_right = distances_to_right_nodes[i]
 
     if node_to_right != None:  # We know that node_destiny might not exist
-        graph[node_ind].append(node_to_right)
+        graph[node_ind].append([node_to_right, "right"])
 
         #  CHeck to add destinations.
         for destination_node_ind in destination_stars:
@@ -324,13 +414,13 @@ for node_ind, node in enumerate(nodes_positions_stars):
                 print("belongs to this node ", (dest_row - representative[0]) in [-1, 0, 1, 2])
                 print()"""
             if (dest_row, dest_col) in node[0]:
-                graph[node_ind].append(destination_node_ind)
+                graph[node_ind].append([destination_node_ind, "right"])
 
             # col greater than origin col, smaller than destiny node col
             # Row is upwards max 1 or downwards max 2
             elif dest_col > node[0][0][1] and dest_col < nodes_positions_stars[node_to_right][0][0][1]:
                 if (dest_row - node[0][0][0]) in [-1, 0, 1, 2]:
-                    graph[node_ind].append(destination_node_ind)
+                    graph[node_ind].append([destination_node_ind, "right"])
 
     for i in range(len(distances_to_left_nodes)):
         if distances_to_left_nodes[i] < min_distance_left:
@@ -338,20 +428,20 @@ for node_ind, node in enumerate(nodes_positions_stars):
             min_distance_left = distances_to_left_nodes[i]
 
     if node_to_left != None:  # We know that node_destiny might not exist
-        graph[node_ind].append(node_to_left)
+        graph[node_ind].append([node_to_left, "left"])
         #  CHeck to add destinations.
         for destination_node_ind in destination_stars:
             dest_row, dest_col = destination_stars[destination_node_ind]
             # Destination in intersection.
         
             if (dest_row, dest_col) in node[0]:
-                graph[node_ind].append(destination_node_ind)
+                graph[node_ind].append([destination_node_ind, "left"])
 
             # col greater than origin col, smaller than destiny node col
             # Row is upwards max 1 or downwards max 2
             elif dest_col > node[0][0][1] and dest_col < nodes_positions_stars[node_to_left][0][0][1]:
                 if (dest_row - node[0][0][0]) in [-1, 0, 1, 2]:
-                    graph[node_ind].append(destination_node_ind)
+                    graph[node_ind].append([destination_node_ind, "left"])
 
 
 
@@ -398,7 +488,7 @@ for node_ind, node in enumerate(nodes_positions_stars):
             min_distance_up = distances_to_up_nodes[i]
 
     if node_to_up != None:  # We know that node_destiny might not exist
-        graph[node_ind].append(node_to_up)
+        graph[node_ind].append([node_to_up, "up"])
 
         #  CHeck to add destinations.
         for destination_node_ind in destination_stars:
@@ -406,13 +496,13 @@ for node_ind, node in enumerate(nodes_positions_stars):
             # Destination in intersection.
         
             if (dest_row, dest_col) in node[0]:
-                graph[node_ind].append(destination_node_ind)
+                graph[node_ind].append([destination_node_ind, "up"])
 
             # row smaller than origin row, greater than destiny node row
             # col is left max 1 or right max 2
             elif dest_row < node[0][0][0] and dest_row > nodes_positions_stars[node_to_up][0][0][0]:
                 if (dest_col - node[0][0][1]) in [-1, 0, 1, 2]:
-                    graph[node_ind].append(destination_node_ind)
+                    graph[node_ind].append([destination_node_ind, "up"])
 
 
     for i in range(len(distances_to_down_nodes)):
@@ -424,7 +514,7 @@ for node_ind, node in enumerate(nodes_positions_stars):
     #print("node to down is", node_to_down)
     if node_to_down != None:  # We know that node_destiny might not exist
        #print("node to down is", nodes_positions_stars[node_to_down][1])
-        graph[node_ind].append(node_to_down)
+        graph[node_ind].append([node_to_down, "down"])
         
         #  CHeck to add destinations.
         for destination_node_ind in destination_stars:
@@ -432,16 +522,16 @@ for node_ind, node in enumerate(nodes_positions_stars):
             # Destination in intersection.
         
             if (dest_row, dest_col) in node[0]:
-                graph[node_ind].append(destination_node_ind)
+                graph[node_ind].append([destination_node_ind, "down"])
 
             # row greater than origin row, smaller than destiny node row
             # col is left max 1 or right max 2
             elif dest_row > node[0][0][0] and dest_row < nodes_positions_stars[node_to_down][0][0][0]:
                 if (dest_col - node[0][0][1]) in [-1, 0, 1, 2]:
-                    graph[node_ind].append(destination_node_ind)
+                    graph[node_ind].append([destination_node_ind, "down"])
 
 
-    
+    """
     print("for node star ", node[1], " up down right left nodes are")
 
     for node_to_upf in nodes_to_up:
@@ -483,24 +573,16 @@ for node_ind, node in enumerate(nodes_positions_stars):
         print("down: ", nodes_positions_stars[node_to_down][1])
     except:
         pass
-    print("\n\n")
+    print("\n\n")"""
 
-
+"""
 for key in graph:
     print(f"Nodo {nodes_positions_stars[key][1]}")
-    for node_index in graph[key]:
+    for adj_list in graph[key]:
         try:
-            print(f"hacia {nodes_positions_stars[node_index][1]}")
+            print(f"hacia {nodes_positions_stars[adj_list[0]][1]}")
         except:
-            print(f"hacia {destination_stars[node_index]}")
-    print()
+            print(f"hacia {destination_stars[adj_list[0]]}")
+    print()"""
 
-
-# DESTINOS
-
-
-
-"""    
-{1: [2, 3, 4]}
-"""
 
