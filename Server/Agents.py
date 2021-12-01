@@ -23,8 +23,8 @@ class Car(Agent):
         print(self.pos)
         print(self.destination)
 
-        print("with google maps, i know my intersections ", self.star_lists)
         self.star_lists = google_maps_stars((self.pos[1], self.pos[0]), (self.destination[1], self.destination[0]))
+        print("with google maps, i know my intersections ", self.star_lists)
         for star in self.star_lists:
             star = (star[1], star[0])
         print("i flipped them ", self.star_lists)

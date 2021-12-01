@@ -585,7 +585,7 @@ for node_ind, node in enumerate(nodes_positions_stars):
         pass
     print("\n\n")"""
 
-
+"""
 for key in graph:
     print(f"Nodo {nodes_positions_stars[key][1]}")
     for adj_list in graph[key]:
@@ -594,5 +594,5 @@ for key in graph:
         except:
             print(f"hacia {destination_stars[adj_list[0]]}")
     print()
-
+"""
 
