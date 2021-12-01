@@ -64,9 +64,7 @@ class TrafficModel(Model):
                 agents_in_pos = self.grid.get_cell_list_contents([pos])
                 car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
                 road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
-            # (17, 1) direccion right
-
-            pos = (19, 1)
+            #pos = (19, 1)
             print(f"----------\nCar pos: {pos}")
             # car.destination = self.destinations[i].pos
             a = Car(i+1000, self, pos, matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
