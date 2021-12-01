@@ -138,7 +138,7 @@ class Car(Agent):
                 elif(len(traffic_light_agent) > 0):
                     traffic_light_agent[0].occupied_next = False
                 next_road_agent.occupied_next = True
-                self.current_direction = next_road_agent.direction[0] # ----
+                #self.current_direction = next_road_agent.direction[0] # ----
                 print(f"El agente {self.unique_id} se movera de {self.pos} a {cell_to_move}.")
                 self.model.grid.move_agent(self, cell_to_move)
             else:

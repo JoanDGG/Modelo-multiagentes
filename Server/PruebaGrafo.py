@@ -70,6 +70,12 @@ def google_maps_stars(position: tuple, destiny_position: tuple):
     #print("-----------------------------------------")
     return stars_list
 
+def matrix2coord(row, col, height):
+    return(col, height - row - 1)
+
+def coord2matrix(x, y, height):
+    return(height - y - 1, x)
+
 def intersection_directions():
     inter_position_to_dirs = {}
     #print(nodes_positions_stars)
@@ -79,14 +85,8 @@ def intersection_directions():
         for outlink in graph[node_position_star_ind]:
             directions.add(outlink[1])
         for inter_position in node_position_star[0]:
-            inter_position_to_dirs[(inter_position[1], inter_position[0])] = list(directions)
+            inter_position_to_dirs[matrix2coord(inter_position[0], inter_position[1], lines_np_shape[0])] = list(directions)
 
     return inter_position_to_dirs
 
 inters_positions_to_dirs = intersection_directions()
-
-def matrix2coord(row, col, height):
-    return(col, height - row - 1)
-
-def coord2matrix(x, y, height):
-    return(height - y - 1, x)
