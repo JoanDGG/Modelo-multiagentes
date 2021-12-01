@@ -11,7 +11,7 @@ def print_star_with_graph_ind(ind, nodes_positions_stars):
     print(nodes_positions_stars[ind][1], end=" ")
 
 
-def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars: list, destination_stars: dict):
+def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars: list, destination_stars: dict, destiny_position: tuple):
     #print("Graph:\n", graph)
 
     possible_startings = []
@@ -57,25 +57,29 @@ def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars:
                 if origin_adj_node[1] == "right":
                     if car_cols > origin_node_positions[0][1] and car_cols < destiny_star_rows:
                         if (car_rows - origin_node_positions[0][0] in [0, 1]):
-                            possible_startings += [origin_adj_node_ind]
+                            if destiny_star_rows == destiny_position[0] and destiny_star_cols == destiny_position[1]:
+                                possible_startings += [origin_adj_node_ind]
                 # Line to the left.
                 # pos cols smaller than origin greater than destiny.
                 elif origin_adj_node[1] == "left":
                     if car_cols < origin_node_positions[0][1] and car_cols > destiny_star_cols:
                         if (car_rows - origin_node_positions[0][0] in [0, 1]):
-                            possible_startings += [origin_adj_node_ind]
+                            if destiny_star_rows == destiny_position[0] and destiny_star_cols == destiny_position[1]:
+                                possible_startings += [origin_adj_node_ind]
                 # Line to up.
                 # pos rows smaller than origin greater than destiny.
                 elif origin_adj_node[1] == "up":
                     if car_rows < origin_node_positions[0][0] and car_rows > destiny_star_rows:
                         if (car_cols - origin_node_positions[0][1]) in [0, 1]:
-                            possible_startings += [origin_adj_node_ind]
+                            if destiny_star_rows == destiny_position[0] and destiny_star_cols == destiny_position[1]:
+                                possible_startings += [origin_adj_node_ind]
                 # Line to down.
                 # pos rows greater then origin smaller than destiny
                 elif origin_adj_node[1] == "down":
                     if car_rows > origin_node_positions[0][0] and car_rows < destiny_star_rows:
                         if (car_cols - origin_node_positions[0][1]) in [0, 1]:
-                            possible_startings += [origin_adj_node_ind]
+                            if destiny_star_rows == destiny_position[0] and destiny_star_cols == destiny_position[1]:
+                                possible_startings += [origin_adj_node_ind]
 
     #print("Los possible startings son ", possible_startings)
     
