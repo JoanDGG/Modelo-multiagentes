@@ -60,7 +60,7 @@ class TrafficModel(Model):
                 road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
             print(f"Car pos: {pos}")
             # car.destination = self.destinations[i].pos
-            a = Car(i+1000, self, pos, destination_stars[i])
+            a = Car(i+1000, self, pos, (destination_stars[i][1], destination_stars[i][0]))
             self.schedule.add(a)
             self.grid.place_agent(a, pos)
 

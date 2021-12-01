@@ -22,7 +22,10 @@ class Car(Agent):
         self.pos = pos
         print(self.pos)
         print(self.destination)
-        self.star_lists = google_maps_stars(self.pos, self.destination)
+        self.star_lists = google_maps_stars((self.pos[1], self.pos[0]), (self.destination[1], self.destination[0]))
+        for star in self.star_lists:
+            star = (star[1], star[0])
+        
         self.next_star = self.star_lists[0]
         self.arrived = False
 
