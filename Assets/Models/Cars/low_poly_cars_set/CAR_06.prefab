@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5942397617325762497}
   - component: {fileID: 4881007449193645071}
-  - component: {fileID: 242035165035016748}
   m_Layer: 0
   m_Name: Camera
   m_TagString: CarCamera
@@ -75,14 +74,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &242035165035016748
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 181573982004681844}
-  m_Enabled: 1
 --- !u!1 &2245640704015312781
 GameObject:
   m_ObjectHideFlags: 0
