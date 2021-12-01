@@ -20,11 +20,11 @@ class TrafficModel(Model):
 
         with open('base.txt') as baseFile:
             lines = baseFile.readlines()
-            self.width = len(lines[0])-1
+            self.width = len(lines[0])-1  # because of /n.
             self.height = len(lines)
 
             self.grid = MultiGrid(self.width, self.height,torus = False) 
-            self.schedule = RandomActivation(self)
+            self.schedule = RandomActivation(self)  # Agents activate randomly each step.
 
             for r, row in enumerate(lines):
                 for c, col in enumerate(row):
@@ -37,7 +37,7 @@ class TrafficModel(Model):
                         agent = Obstacle(f"ob{r*self.width+c}", self)
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
-                        self.destinations.append(agent)
+                        self.destinations.append(agent)  # To create as many cars.
                     self.grid.place_agent(agent, (c, self.height - r - 1))
 
         # N agent cars = len(self.destinations)
