@@ -70,19 +70,17 @@ def google_maps_stars(position: tuple, destiny_position: tuple):
     #print("-----------------------------------------")
     return stars_list
 
-#google_maps_stars((23, 0), (7, 5))
+def intersection_directions():
+    inter_position_to_dirs = {}
+    #print(nodes_positions_stars)
+    for node_position_star_ind, node_position_star in enumerate(nodes_positions_stars):
+        #print(node_position_star[1])
+        directions = set()
+        for outlink in graph[node_position_star_ind]:
+            directions.add(outlink[1])
+        for inter_position in node_position_star[0]:
+            inter_position_to_dirs[(inter_position[1], inter_position[0])] = list(directions)
 
+    return inter_position_to_dirs
 
-#google_maps_stars((8, 4), (2, 4))
-#google_maps_stars((17, 4), (4, 10))
-#google_maps_stars((6, 1), (13, 2))
-#google_maps_stars((2, 1), (13, 15))
-#google_maps_stars((17, 4), (13, 15))
-
-#for i in range(4, 11):
-#   google_maps_stars((17, i), (13, 15))
-
-#google_maps_stars((17, 10), (13, 15))
-#google_maps_stars((16, 12), (2, 4))
-#google_maps_stars((24, 15), (23, 19))
-#google_maps_stars((21, 1), (7, 22))
+inters_positions_to_dirs = intersection_directions()
