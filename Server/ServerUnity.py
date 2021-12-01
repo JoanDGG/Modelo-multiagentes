@@ -19,7 +19,7 @@ app = Flask("Traffic Model")
 
 @app.route('/init', methods=['POST', 'GET'])
 def initModel():
-    global traffic_model, number_agents, current_step
+    global traffic_model, current_step
 
     if request.method == 'GET': # POST
         # number_agents = int(request.form.get('NAgents'))
@@ -37,10 +37,10 @@ def getAgents():
     global traffic_model
 
     if request.method == 'GET':
-        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "unique_id": a.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Car)], key=lambda item: item["unique_id"])
+        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "unique_id": b.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Car)], key=lambda item: item["unique_id"])
         print("Model at getCarAgents: ", traffic_model)
-        for cars_attributes in cars_attributes:
-            print(cars_attributes)
+        for car_attributes in cars_attributes:
+            print(car_attributes)
         return jsonify({'cars_attributes': cars_attributes})
 
 @app.route('/getTraffic_Lights', methods=['GET'])
@@ -48,7 +48,7 @@ def getTraffic_Lights():
     global traffic_model
 
     if request.method == 'GET':
-        traffic_light_attributes = sorted([{"x": x, "y":1, "z":z, "state": a.state, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Traffic_Light)], key=lambda item: item["unique_id"])
+        traffic_light_attributes = sorted([{"x": x, "y":1, "z":z, "state": b.state, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Traffic_Light)], key=lambda item: item["unique_id"])
         return jsonify({'traffic_light_attributes':traffic_light_attributes})
 
 @app.route('/getDestinations', methods=['GET'])
@@ -56,7 +56,7 @@ def getDestinations():
     global traffic_model
 
     if request.method == 'GET':
-        destination_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Destination)], key=lambda item: item["unique_id"])
+        destination_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Destination)], key=lambda item: item["unique_id"])
         return jsonify({'destination_positions':destination_positions})
 
 @app.route('/getObstacles', methods=['GET'])
@@ -64,7 +64,7 @@ def getObstacles():
     global traffic_model
 
     if request.method == 'GET':
-        obstacle_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Obstacle)], key=lambda item: item["unique_id"])
+        obstacle_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Obstacle)], key=lambda item: item["unique_id"])
         return jsonify({'obstacles_attributes':obstacle_positions})
 
 @app.route('/getRoads', methods=['GET'])
@@ -72,7 +72,7 @@ def getRoads():
     global traffic_model
 
     if request.method == 'GET':
-        road_attributes = sorted([{"x": x, "y":1, "z":z, "directions": a.direction, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Road)], key=lambda item: item["unique_id"])
+        road_attributes = sorted([{"x": x, "y":1, "z":z, "directions": b.direction, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Road)], key=lambda item: item["unique_id"])
         return jsonify({'road_attributes':road_attributes})
 
 @app.route('/update', methods=['GET'])
