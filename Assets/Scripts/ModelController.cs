@@ -319,7 +319,7 @@ public class AgentController : MonoBehaviour
             }
         }
         //-----------------------------------------------------------------Destinations
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getDestinationsEndpoint);
+        www = UnityWebRequest.Get(serverUrl + getDestinationsEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
@@ -336,7 +336,7 @@ public class AgentController : MonoBehaviour
             }
         }
         //--------------------------------------------------------------------Obstacles
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
+        www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
@@ -354,7 +354,7 @@ public class AgentController : MonoBehaviour
             }
         }
         //------------------------------------------------------------------------Roads
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getRoadsEndpoint);
+        www = UnityWebRequest.Get(serverUrl + getRoadsEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
@@ -393,10 +393,13 @@ public class AgentController : MonoBehaviour
                     if (trafficLightData.state) 
                     {
                         //Update light color to green
+                        // trafficLightData.transform.GetChild(0).gameObject.GetComponent<Light>().Color()
+
                     }
                     else
                     {
                         //Update light color to red
+                        // trafficLightData.transform.GetChild(0).gameObject.GetComponent<Light>().Color()
                     }
                 }     
             }
