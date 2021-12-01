@@ -13,10 +13,12 @@ class TrafficModel(Model):
     def __init__(self):
 
         self.destinations = []
-        dataDictionary = {">" : "Right",
-                          "<" : "Left",
-                          "^" : "Up",
-                          "v" : "Down"}
+        
+        dataDictionary = {">" : "right",
+                          "<" : "left",
+                          "^" : "up",
+                          "v" : "down"}
+        
 
         with open('base.txt') as baseFile:
             lines = baseFile.readlines()
@@ -29,8 +31,12 @@ class TrafficModel(Model):
             for r, row in enumerate(lines):
                 for c, col in enumerate(row):
                     if col in ["v", "^", ">", "<"]:
-                        agent = Road(f"r{r*self.width+c}", self, dataDictionary[col])
-                        self.grid.place_agent(agent, (c, self.height - r - 1))
+                        road_pos = (c, self.height - r - 1)
+                        try:
+                            agent = Road(f"r{r*self.width+c}", self, inters_positions_to_dirs[road_pos])
+                        except:
+                            agent = Road(f"r{r*self.width+c}", self, [dataDictionary[col]])
+                        self.grid.place_agent(agent, road_pos)
                     elif col in ["S", "s"]:
                         agent = Traffic_Light(f"tl{r*self.width+c}", self, False if col == "S" else True)
                         self.schedule.add(agent)
@@ -46,6 +52,7 @@ class TrafficModel(Model):
         # Add the agent to a random empty grid cell
         for i in destination_stars:
             # Place car where there is no other car and is a Road
+            
             pos_gen = lambda w, h: (self.random.randrange(w), self.random.randrange(h))
             pos = pos_gen(self.grid.width, self.grid.height)
             # Si no hay coche y hay road
@@ -58,9 +65,12 @@ class TrafficModel(Model):
                 agents_in_pos = self.grid.get_cell_list_contents([pos])
                 car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
                 road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
+            
+            
+            #pos = (17, 24)
             print(f"Car pos: {pos}")
             # car.destination = self.destinations[i].pos
-            a = Car(i+1000, self, pos, (destination_stars[i][1], destination_stars[i][0]))
+            a = Car(i+1000, self, pos, matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
             self.schedule.add(a)
             self.grid.place_agent(a, pos)
 

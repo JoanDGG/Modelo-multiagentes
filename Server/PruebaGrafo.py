@@ -84,3 +84,9 @@ def intersection_directions():
     return inter_position_to_dirs
 
 inters_positions_to_dirs = intersection_directions()
+
+def matrix2coord(row, col, height):
+    return(col, height - row - 1)
+
+def coord2matrix(x, y, height):
+    return(height - y - 1, x)

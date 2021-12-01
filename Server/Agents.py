@@ -18,19 +18,19 @@ class Car(Agent):
         """
         super().__init__(unique_id, model)
         self.destination = destination
-        self.direction = "Left"
+        self.direction = ["left"]
         self.pos = pos
-        print(self.pos)
-        print(self.destination)
 
-        self.star_lists = google_maps_stars((self.pos[1], self.pos[0]), (self.destination[1], self.destination[0]))
+        self.star_lists = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
+                                            coord2matrix(self.destination[0], self.destination[1], self.model.grid.height))
         print("with google maps, i know my intersections ", self.star_lists)
-        for star in self.star_lists:
-            star = (star[1], star[0])
+        for ind, star in enumerate(self.star_lists):
+            self.star_lists[ind] = matrix2coord(star[0], star[1], self.model.grid.height)
         print("i flipped them ", self.star_lists)
         
         self.next_star = self.star_lists[0]
         self.arrived = False
+        print(self.star_lists)
 
 
     def step(self):
@@ -48,32 +48,34 @@ class Car(Agent):
 
         neighbour_cells = self.model.grid.get_neighborhood(
             self.pos,
-            moore=True, # Moore neighborhood (including diagonals)
+            moore=False, # Moore neighborhood (including diagonals)
             include_center=True)
         
         # Get the road agent of actual cell
         # PENDIENTE: eliminar celdas que no son del carril opuesto
         road_agent = [agent for agent in present_in_cell if isinstance(agent, Road)]
-        if(road_agent):
-            if(road_agent.direction == "Right"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[0] >= self.pos[0])]
-            elif(road_agent.direction == "Left"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[0] <= self.pos[0])]
-            elif(road_agent.direction == "Up"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[1] >= self.pos[1])]
-            elif(road_agent.direction == "Down"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[1] <= self.pos[1])]
-        else:
-            if(self.direction == "Right"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[0] >= self.pos[0])]
-            elif(self.direction == "Left"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[0] <= self.pos[0])]
-            elif(self.direction == "Up"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[1] >= self.pos[1])]
-            elif(self.direction == "Down"):
-                possible_steps = [cell for cell in neighbour_cells if(cell[1] <= self.pos[1])]
-        
-        self.direction = road_agent.direction
+        traffic_light_agent = [agent for agent in present_in_cell if isinstance(agent, Traffic_Light)]
+        possible_steps = []
+        if(len(road_agent) > 0):
+            if("right" in road_agent[0].direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[0] >= self.pos[0])]
+            if("left" in road_agent[0].direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[0] <= self.pos[0])]
+            if("up" in road_agent[0].direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[1] >= self.pos[1])]
+            if("down" in road_agent[0].direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[1] <= self.pos[1])]
+        elif(len(traffic_light_agent) > 0):
+            print(f"There is a traffic light, actual directions{self.direction}")
+            if("right" in self.direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[0] >= self.pos[0])]
+            if("left" in self.direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[0] <= self.pos[0])]
+            if("up" in self.direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[1] >= self.pos[1])]
+            if("down" in self.direction):
+                possible_steps += [cell for cell in neighbour_cells if(cell[1] <= self.pos[1])]
+        print(possible_steps)
         #possible_steps.append(self.pos)
 
         if(self.destination in possible_steps):
@@ -83,8 +85,8 @@ class Car(Agent):
         else:
             traffic_light_agent = [agent for agent in present_in_cell if isinstance(agent, Traffic_Light)]
             
-            if(traffic_light_agent):
-                if(not traffic_light_agent.state):
+            if(len(traffic_light_agent) > 0):
+                if(not traffic_light_agent[0].state):
                     # Stop if red light
                     return
             elif(self.next_star in possible_steps):
@@ -93,41 +95,51 @@ class Car(Agent):
                     self.next_star = self.star_lists[star_index + 1]
                 else:
                     self.arrived = True
-            else:
-                # Calculate cell_to_move:
-                # Check which grid cells are empty
+            # Calculate cell_to_move:
+            # Check which grid cells are empty
 
-                # Calculate closest cell to next star
-                cell_to_move = None
-                empty_positions = []
-                road_agents = []
-                for i in range(0, len(possible_steps)):
-                    list_with_agent_in_cell = self.model.grid.get_cell_list_contents([possible_steps[i]])
-                    road_agent_in_cell = [agent for agent in list_with_agent_in_cell if isinstance(agent, Road)]
-                    # If theres an empty cell or will be empty
+            # Calculate closest cell to next star
+            cell_to_move = None
+            empty_positions = []
+            road_agents = []
+            for i in range(0, len(possible_steps)):
+                list_with_agent_in_cell = self.model.grid.get_cell_list_contents([possible_steps[i]])
+                print(list_with_agent_in_cell)
+                road_agent_in_cell = [agent for agent in list_with_agent_in_cell if isinstance(agent, Road)]
+                traffic_light_agent_in_cell = [agent for agent in list_with_agent_in_cell if isinstance(agent, Traffic_Light)]
+                # If theres an empty cell or will be empty
+                if(len(road_agent_in_cell) > 0):
                     if not road_agent_in_cell[0].occupied_next:
                         empty_positions.append(possible_steps[i])
                         road_agents.append(road_agent_in_cell[0])
+                elif(len(traffic_light_agent_in_cell) > 0):
+                    if not traffic_light_agent_in_cell[0].occupied_next:
+                        empty_positions.append(possible_steps[i])
+                        road_agents.append(traffic_light_agent_in_cell[0])
 
-                distance = math.inf
-                index_min_distance = None
-                for index, cell in enumerate(empty_positions):
-                    distance_from_cell = math.sqrt((cell[0] - self.model.drop_zone[0])**2+(cell[1] - self.model.drop_zone[1])**2)
-                    if(distance_from_cell < distance):
-                        distance = distance_from_cell
-                        index_min_distance = index
+            distance = math.inf
+            index_min_distance = None
+            for index, cell in enumerate(empty_positions):
+                distance_from_cell = math.sqrt((cell[0] - self.next_star[0])**2+(cell[1] - self.next_star[1])**2)
+                if(distance_from_cell < distance):
+                    distance = distance_from_cell
+                    index_min_distance = index
 
-                if(isinstance(index_min_distance, int)):
-                    cell_to_move = empty_positions[index_min_distance]
-                    next_road_agent = road_agents[index_min_distance]
-                    
-                if(cell_to_move):
-                    # Move to next_cell
-                    road_agent.occupied_next = False
-                    next_road_agent.occupied_next = True
-                    self.model.grid.move_agent(self, cell_to_move)
-                else:
-                    print(f"El agente {self.unique_id} no se puede mover de {self.pos} a {cell_to_move}. No hay celdas vacias")
+            if(isinstance(index_min_distance, int)):
+                cell_to_move = empty_positions[index_min_distance]
+                next_road_agent = road_agents[index_min_distance]
+                
+            if(cell_to_move):
+                # Move to next_cell
+                if(len(road_agent) > 0):
+                    road_agent[0].occupied_next = False
+                    self.direction = road_agent[0].direction
+                elif(len(traffic_light_agent) > 0):
+                    traffic_light_agent[0].occupied_next = False
+                next_road_agent.occupied_next = True
+                self.model.grid.move_agent(self, cell_to_move)
+            else:
+                print(f"El agente {self.unique_id} no se puede mover de {self.pos} a {cell_to_move}. No hay celdas vacias")
 
 class Traffic_Light(Agent):
     """
@@ -136,7 +148,8 @@ class Traffic_Light(Agent):
     def __init__(self, unique_id, model, state = False):
         super().__init__(unique_id, model)
         self.state = state
-        
+        self.occupied_next = False
+
     def step(self):
         pass
 
@@ -164,7 +177,7 @@ class Road(Agent):
     """
     Obstacle agent. Just to add obstacles to the grid.
     """
-    def __init__(self, unique_id, model, direction = "Left"):
+    def __init__(self, unique_id, model, direction = ["left"]):
         super().__init__(unique_id, model)
         self.direction = direction # Añadir posibles direcciones desde codigo monstruo
         self.occupied_next = False
