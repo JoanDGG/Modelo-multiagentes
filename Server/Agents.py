@@ -9,7 +9,7 @@ class Car(Agent):
         unique_id: Agent's ID 
         direction: Randomly chosen direction chosen from one of eight directions
     """
-    def __init__(self, unique_id, model, destination):
+    def __init__(self, unique_id, model, pos, destination):
         """
         Creates a new random agent.
         Args:
@@ -19,7 +19,9 @@ class Car(Agent):
         super().__init__(unique_id, model)
         self.destination = destination
         self.direction = "Left"
-
+        self.pos = pos
+        print(self.pos)
+        print(self.destination)
         self.star_lists = google_maps_stars(self.pos, self.destination)
         self.next_star = self.star_lists[0]
         self.arrived = False

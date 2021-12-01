@@ -17,14 +17,14 @@ def find_shortest_path(graph, start, end):
 def google_maps_stars(position: tuple, destiny_position: tuple):
 
     starting_node = calculate_starting_node(position, graph, nodes_positions_stars, destination_stars, destiny_position)
-    #print(f"The starting node for {position} is ")
-    """
+    print(f"The starting node for {position} is {starting_node}")
+    
     try:
         #return nodes_positions_stars[starting_node][1]
         print(f"node star {nodes_positions_stars[starting_node][1]}")
     except:
         #return destination_stars[starting_node]
-        print(f"node star {destination_stars[starting_node]}")"""
+        print(f"node star {destination_stars[starting_node]}")
 
     graph_aux = graph.copy()
     max_node_index = max(destination_stars)
@@ -47,23 +47,23 @@ def google_maps_stars(position: tuple, destiny_position: tuple):
     #print("graph aux", graph_aux)
     node_ind_shortest_path = find_shortest_path(graph_aux, starting_node, destiny_node_ind)
     stars_list = []
-    #print(f"Printing shortest path for node from {position} to {destiny_position}")
+    print(f"Printing shortest path for node from {position} to {destiny_position}")
     if(node_ind_shortest_path != None):
         for node_ind in node_ind_shortest_path:
             try:
                 #return nodes_positions_stars[starting_node][1]
                 stars_list.append(nodes_positions_stars[node_ind][1])
-                #print(f"node star {nodes_positions_stars[node_ind][1]}")
+                print(f"node star {nodes_positions_stars[node_ind][1]}")
             except:
                 #return destination_stars[starting_node]
                 stars_list.append(destination_stars[node_ind])
-                #print(f"node star {destination_stars[node_ind]}")
+                print(f"node star {destination_stars[node_ind]}")
     else:
         print("Path not found")
     #print("-----------------------------------------")
     return stars_list
 
-google_maps_stars((17, 10), (18, 14))
+google_maps_stars((8, 0), (2, 23))
 
 
 #google_maps_stars((8, 4), (2, 4))
