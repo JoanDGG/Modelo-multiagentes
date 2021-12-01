@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -299,6 +299,85 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &357510467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 357510470}
+  - component: {fileID: 357510469}
+  - component: {fileID: 357510468}
+  m_Layer: 5
+  m_Name: currentStepText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &357510468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357510467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 50
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 5
+    m_MaxSize: 50
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Step
+--- !u!222 &357510469
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357510467}
+  m_CullTransparentMesh: 1
+--- !u!224 &357510470
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357510467}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 388343074}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1619.1418, y: -67.24658}
+  m_SizeDelta: {x: 547.9648, y: 96.9931}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &388343070
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +475,7 @@ RectTransform:
   - {fileID: 447167954}
   - {fileID: 1556588342}
   - {fileID: 2117676242}
+  - {fileID: 357510470}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -578,6 +658,10 @@ PrefabInstance:
     - target: {fileID: 3763717772279177843, guid: b3bff124a20674589b44c27ee15a9d51, type: 3}
       propertyPath: m_Name
       value: CAR_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3763717772279177843, guid: b3bff124a20674589b44c27ee15a9d51, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3763717772279177843, guid: b3bff124a20674589b44c27ee15a9d51, type: 3}
       propertyPath: m_TagString
@@ -920,6 +1004,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089368676}
   m_CullTransparentMesh: 1
+--- !u!1 &1313922287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1313922289}
+  - component: {fileID: 1313922288}
+  m_Layer: 0
+  m_Name: ModelController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1313922288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313922287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9c30886b19ed470398fe205a8231367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carPrefabs:
+  - {fileID: 3763717772279177843, guid: b3bff124a20674589b44c27ee15a9d51, type: 3}
+  - {fileID: 2578143616913752633, guid: 3b997271d62bf4b4d82f2cf2ff9249b0, type: 3}
+  - {fileID: 8114860923958709428, guid: e945e21235bc0400aaa41109c41991dd, type: 3}
+  - {fileID: 1345705248342229022, guid: 23bc5af7b8fe2438ab16a94f1cedd48b, type: 3}
+  - {fileID: 797792653227890693, guid: 10b2d408cccf14752a7df7a515cc4578, type: 3}
+  - {fileID: 2245640704015312781, guid: a3157f010f6e247f19751410e3d96569, type: 3}
+  trafficLightPrefab: {fileID: 1112570095379407222, guid: fe95fdad87ca747e787dde6557fadff3, type: 3}
+  destinationPrefab: {fileID: 2194015151219239702, guid: 1bbe94c083c4960438104652782cc5fa, type: 3}
+  buildingPrefab: {fileID: 1949229835591866727, guid: 4efda54ad96349d418b1ceb5e665c280, type: 3}
+  roadPrefab: {fileID: 4778075493501853575, guid: 9d3c30dd558a34292bd4d50c5659314c, type: 3}
+  currentStep: {fileID: 357510468}
+  timeToUpdate: 0.5
+  timer: 0
+  dt: 0
+--- !u!4 &1313922289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1313922287}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1556588341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,7 +1218,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2578143616913752633, guid: 3b997271d62bf4b4d82f2cf2ff9249b0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4496964299582863808, guid: 3b997271d62bf4b4d82f2cf2ff9249b0, type: 3}
       propertyPath: m_IsActive
@@ -1813,6 +1955,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ambiente
       objectReference: {fileID: 0}
+    - target: {fileID: 4664656767035256344, guid: 64956376c104342efad3f089fad3491b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5474090376991241378, guid: 64956376c104342efad3f089fad3491b, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1931,6 +2077,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CAR_06
       objectReference: {fileID: 0}
+    - target: {fileID: 2245640704015312781, guid: a3157f010f6e247f19751410e3d96569, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8068154034134847991, guid: a3157f010f6e247f19751410e3d96569, type: 3}
       propertyPath: m_RootOrder
       value: 11
@@ -2036,6 +2186,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CAR_03
       objectReference: {fileID: 0}
+    - target: {fileID: 8114860923958709428, guid: e945e21235bc0400aaa41109c41991dd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e945e21235bc0400aaa41109c41991dd, type: 3}
 --- !u!1001 &4404273897043324607
@@ -2052,6 +2206,10 @@ PrefabInstance:
     - target: {fileID: 1345705248342229022, guid: 23bc5af7b8fe2438ab16a94f1cedd48b, type: 3}
       propertyPath: m_Name
       value: CAR_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345705248342229022, guid: 23bc5af7b8fe2438ab16a94f1cedd48b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7093502296588482148, guid: 23bc5af7b8fe2438ab16a94f1cedd48b, type: 3}
       propertyPath: m_RootOrder
@@ -2109,6 +2267,10 @@ PrefabInstance:
     - target: {fileID: 1112570095379407222, guid: fe95fdad87ca747e787dde6557fadff3, type: 3}
       propertyPath: m_Name
       value: TrafficLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1112570095379407222, guid: fe95fdad87ca747e787dde6557fadff3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1479572630568619551, guid: fe95fdad87ca747e787dde6557fadff3, type: 3}
       propertyPath: m_IsActive
@@ -2170,6 +2332,10 @@ PrefabInstance:
     - target: {fileID: 797792653227890693, guid: 10b2d408cccf14752a7df7a515cc4578, type: 3}
       propertyPath: m_Name
       value: CAR_05
+      objectReference: {fileID: 0}
+    - target: {fileID: 797792653227890693, guid: 10b2d408cccf14752a7df7a515cc4578, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1638570230395085820, guid: 10b2d408cccf14752a7df7a515cc4578, type: 3}
       propertyPath: m_IsActive

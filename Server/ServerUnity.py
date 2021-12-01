@@ -9,6 +9,7 @@ from Model import TrafficModel
 # Default elements of the model:
 
 # number_agents = 10
+traffic_model = None
 current_step = 0
 # max_steps = 100
 
@@ -25,6 +26,7 @@ def initModel():
         current_step = 0
         #max_steps = int(request.form.get('maxSteps'))
         traffic_model = TrafficModel()
+        print("Model at init: ", traffic_model)
         return jsonify({"width":traffic_model.width, "height": traffic_model.height})
 
     #elif request.method == 'GET':
@@ -35,9 +37,10 @@ def getAgents():
     global traffic_model
 
     if request.method == 'GET':
-        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "current_direction": a.current_direction, "unique_id": a.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Car)], key=lambda item: item["unique_id"])
-#        for car_attributes in cars_attributes:
-#            print(cars_attributes)
+        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "unique_id": a.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Car)], key=lambda item: item["unique_id"])
+        print("Model at getCarAgents: ", traffic_model)
+        for cars_attributes in cars_attributes:
+            print(cars_attributes)
         return jsonify({'cars_attributes': cars_attributes})
 
 @app.route('/getTraffic_Lights', methods=['GET'])

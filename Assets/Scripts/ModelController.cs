@@ -12,7 +12,7 @@ using UnityEngine.Networking;
 public class CarData
 {
     public float x, y, z;
-    public string current_direction;
+    //public string current_direction;
     public int unique_id;
 }
 
@@ -89,7 +89,7 @@ public class ModelData
     public int currentStep;
 }
 
-public class AgentController : MonoBehaviour
+public class ModelController : MonoBehaviour
 {
     // private string url = "https://boids.us-south.cf.appdomain.cloud/";
     string serverUrl = "http://localhost:8585";
@@ -111,7 +111,7 @@ public class AgentController : MonoBehaviour
     bool hold = false;
 
     public GameObject[] carPrefabs = new GameObject[6];
-    public GameObject trafficLightPrefab, destinationPrefab, buildingPrefab, roadPrefab, reloadButton;
+    public GameObject trafficLightPrefab, destinationPrefab, buildingPrefab, roadPrefab; // reloadButton
     public Text currentStep;
     //public int NAgents, NBoxes, width, height, maxShelves, maxSteps;
     public float timeToUpdate = 0.5f, timer, dt;
@@ -242,7 +242,10 @@ public class AgentController : MonoBehaviour
             GridData gridData = JsonUtility.FromJson<GridData>(www.downloadHandler.text);
             height = gridData.height;
             width = gridData.width;
+            Debug.Log(height);
+            Debug.Log(width);
             
+            Debug.Log("Model initialized");
             StartCoroutine(GetCarsData());
             StartCoroutine(GetWorldData());
         }
@@ -251,6 +254,7 @@ public class AgentController : MonoBehaviour
 
     IEnumerator GetCarsData() 
     {
+        Debug.Log(serverUrl + getCarsEndpoint);
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getCarsEndpoint);
         yield return www.SendWebRequest();
  
@@ -259,6 +263,7 @@ public class AgentController : MonoBehaviour
         else 
         {
             carsData = JsonUtility.FromJson<CarsData>(www.downloadHandler.text);
+            Debug.Log(carsData.cars_attributes.Count);
             carsGameObjects = new GameObject[carsData.cars_attributes.Count];
 
             // Store the old positions for each agent
