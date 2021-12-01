@@ -1,5 +1,5 @@
 
-
+import os
 import numpy as np
 from numpy.lib.function_base import diff
 
@@ -12,6 +12,8 @@ def print_star_with_graph_ind(ind, nodes_positions_stars):
 
 
 def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars: list, destination_stars: dict):
+    #print("Graph:\n", graph)
+
     possible_startings = []
 
     car_rows, car_cols = position
@@ -75,7 +77,7 @@ def calculate_starting_node(position: tuple, graph: dict, nodes_positions_stars:
                         if (car_cols - origin_node_positions[0][1]) in [0, 1]:
                             possible_startings += [origin_adj_node_ind]
 
-    print("Los possible startings son ", possible_startings)
+    #print("Los possible startings son ", possible_startings)
     
     min_starting_distance_ind = None
     min_starting_distance = np.inf
@@ -213,9 +215,9 @@ for mask in masks:
                     node_position_star.append(star_position)
                     nodes_positions_stars.append(node_position_star)
 
-print("nodes stars found with no lights")
+#print("nodes stars found with no lights")
 for node_ind, node_position_star in enumerate(nodes_positions_stars):
-    print(node_position_star[1])
+    #print(node_position_star[1])
     no_lights_ind = node_ind
 
 #print("nodes no traffic light", len(nodes_positions_stars))
@@ -294,9 +296,9 @@ for s_position in s_positions:
 
     nodes_positions_stars.append(node_position_star)
 
-print("nodes stars lights")
+#print("nodes stars lights")
 for i in range(no_lights_ind + 1, len(nodes_positions_stars)):
-    print(nodes_positions_stars[i][1])
+    pass#print(nodes_positions_stars[i][1])
 
 destination_stars = {}
 beginning_ind_for_d_node = len(nodes_positions_stars)
@@ -305,8 +307,8 @@ for i in range(lines_np_shape[0]):
         if np.all(lines_np[i][j] == "D"):
             destination_stars[beginning_ind_for_d_node] = (i, j)
             beginning_ind_for_d_node += 1
-print("nodes destinations stars")
-print(destination_stars)
+#print("nodes destinations stars")
+#print(destination_stars)
 
 
 #graph_adj_list = [["v", ">", 0, "^"]]
