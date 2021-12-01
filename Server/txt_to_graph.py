@@ -447,9 +447,9 @@ for node_ind, node in enumerate(nodes_positions_stars):
             if (dest_row, dest_col) in node[0]:
                 graph[node_ind].append([destination_node_ind, "left"])
 
-            # col greater than origin col, smaller than destiny node col
+            # col smaller than origin col, greater than destiny node col
             # Row is upwards max 1 or downwards max 2
-            elif dest_col > node[0][0][1] and dest_col < nodes_positions_stars[node_to_left][0][0][1]:
+            elif dest_col < node[0][0][1] and dest_col > nodes_positions_stars[node_to_left][0][0][1]:
                 if (dest_row - node[0][0][0]) in [-1, 0, 1, 2]:
                     graph[node_ind].append([destination_node_ind, "left"])
 
@@ -585,7 +585,7 @@ for node_ind, node in enumerate(nodes_positions_stars):
         pass
     print("\n\n")"""
 
-"""
+
 for key in graph:
     print(f"Nodo {nodes_positions_stars[key][1]}")
     for adj_list in graph[key]:
@@ -593,6 +593,6 @@ for key in graph:
             print(f"hacia {nodes_positions_stars[adj_list[0]][1]}")
         except:
             print(f"hacia {destination_stars[adj_list[0]]}")
-    print()"""
+    print()
 
 
