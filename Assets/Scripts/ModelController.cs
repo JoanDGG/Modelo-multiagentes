@@ -12,6 +12,7 @@ using UnityEngine.Networking;
 public class CarData
 {
     public float x, y, z;
+    public string current_direction;
     public int unique_id;
 }
 
@@ -41,7 +42,7 @@ public class ObstacleData
 public class RoadData
 {
     public float x, y, z;
-    public string direction;
+    public string[] directions;
     public string unique_id;
 }
 
@@ -102,7 +103,7 @@ public class AgentController : MonoBehaviour
     CarsData carsData;
     TrafficLightsData trafficLightsData;
     DestinationsData destinationsData;
-    ObstaclesData obstacleData;
+    ObstaclesData obstaclesData;
     RoadsData roadsData;
     GameObject[] carsGameObjects;
     List<Vector3> oldPositions;
@@ -115,12 +116,15 @@ public class AgentController : MonoBehaviour
     //public int NAgents, NBoxes, width, height, maxShelves, maxSteps;
     public float timeToUpdate = 0.5f, timer, dt;
 
+    private float width;
+    private float height;
+
     void Start()
     {
         carsData = new CarsData();
         trafficLightsData = new TrafficLightsData();
         destinationsData = new DestinationsData();
-        obstacleData = new ObstaclesData();
+        obstaclesData = new ObstaclesData();
         roadsData = new RoadsData();
         oldPositions = new List<Vector3>();
         newPositions = new List<Vector3>();
@@ -200,15 +204,15 @@ public class AgentController : MonoBehaviour
     }
     IEnumerator SendConfiguration()
     {
-        WWWForm form = new WWWForm();
         /*
+        WWWForm form = new WWWForm();
         form.AddField("NAgents", NAgents.ToString());
         form.AddField("NBoxes", NBoxes.ToString());
         form.AddField("width", width.ToString());
         form.AddField("height", height.ToString());
         form.AddField("maxShelves", maxShelves.ToString());
         form.AddField("maxSteps", maxSteps.ToString());
-        */
+        
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -224,8 +228,9 @@ public class AgentController : MonoBehaviour
             StartCoroutine(GetCarsData());
             StartCoroutine(GetWorldData());
         }
-        /*
-        www = UnityWebRequest.Get(serverUrl + sendConfigEndpoint);
+        */
+        
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + sendConfigEndpoint);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -234,13 +239,14 @@ public class AgentController : MonoBehaviour
         }
         else
         {
-            // Assign position to the drop zone
-            Drop_zones drop_zones = JsonUtility.FromJson<Drop_zones>(www.downloadHandler.text);
-            drop_zone.transform.position = new Vector3(drop_zones.drop_zone_pos[0].x,
-                                                       drop_zone.transform.position.y, 
-                                                       drop_zones.drop_zone_pos[0].y);
+            GridData gridData = JsonUtility.FromJson<GridData>(www.downloadHandler.text);
+            height = gridData.height;
+            width = gridData.width;
+            
+            StartCoroutine(GetCarsData());
+            StartCoroutine(GetWorldData());
         }
-        */
+        
     }
 
     IEnumerator GetCarsData() 
@@ -305,40 +311,33 @@ public class AgentController : MonoBehaviour
             // Recieve tags from json and check for instantiation
             foreach(TrafficLightData trafficLight in trafficLightsData.traffic_light_attributes)
             {
-                Instantiate(trafficLightPrefab, 
+                GameObject trafficLightInstance = Instantiate(trafficLightPrefab, 
                             new Vector3(trafficLight.x, trafficLight.y, trafficLight.z), 
                             Quaternion.identity);
+                // for the light
+                // trafficLightInstance.transform.GetChild(0).gameObject.
             }
         }
         //-----------------------------------------------------------------Destinations
-        //--------------------------------------------------------------------Obstacles
-        //------------------------------------------------------------------------Roads
-        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLigtsEndpoint);
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getDestinationsEndpoint);
         yield return www.SendWebRequest();
  
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
         else 
         {
-            obstacleData = JsonUtility.FromJson<ObstaclesData>(www.downloadHandler.text);
+            destinationsData = JsonUtility.FromJson<DestinationsData>(www.downloadHandler.text);
             // Recieve tags from json and check for instantiation
-            foreach(ObstacleData obstacle in obstacleData.obstacles_attributes)
+            foreach(DestinationData destinationData in destinationsData.destination_positions)
             {
-                if (obstacle.tag == "box") {
-                    Instantiate(boxPrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
-                }
-                else if (obstacle.tag == "shelf") {
-                    Instantiate(shelfPrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
-                }
-                else if (obstacle.tag == "border") {
-                    Instantiate(wallPrefab, new Vector3(obstacle.x, obstacle.y, obstacle.z), Quaternion.identity);
-                }
+                Instantiate(destinationPrefab, 
+                            new Vector3(destinationData.x, destinationData.y, destinationData.z), 
+                            Quaternion.identity);
+                // for the light
+                // trafficLightInstance.transform.GetChild(0).gameObject.
             }
         }
-    }
-
-    IEnumerator UpdateWorldData()
-    {
+        //--------------------------------------------------------------------Obstacles
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getObstaclesEndpoint);
         yield return www.SendWebRequest();
  
@@ -346,23 +345,63 @@ public class AgentController : MonoBehaviour
             Debug.Log(www.error);
         else 
         {
-            obstacleData = JsonUtility.FromJson<ObstaclesData>(www.downloadHandler.text);
+            obstaclesData = JsonUtility.FromJson<ObstaclesData>(www.downloadHandler.text);
             // Recieve tags from json and check for instantiation
-            bool boxGOSurvives;
+            foreach(ObstacleData obstacleData in obstaclesData.obstacle_positions)
+            {
+                // Check for better instantiation of buildings
+                Instantiate(buildingPrefab,
+                            new Vector3(obstacleData.x, obstacleData.y, obstacleData.z), 
+                            Quaternion.identity);
+                // for the light
+                // trafficLightInstance.transform.GetChild(0).gameObject.
+            }
+        }
+        //------------------------------------------------------------------------Roads
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getRoadsEndpoint);
+        yield return www.SendWebRequest();
+ 
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.Log(www.error);
+        else 
+        {
+            roadsData = JsonUtility.FromJson<RoadsData>(www.downloadHandler.text);
+            // Recieve tags from json and check for instantiation
+            foreach(RoadData roadData in roadsData.road_attributes)
+            {
+                // Check for roadsData.direction
+                roadInstance = Instantiate(roadPrefab,
+                            new Vector3(roadData.x, roadData.y, roadData.z), 
+                            Quaternion.identity);
+                // Scale roadInstance with widht, height and size of roadsData
+            }
+        }
+    }
 
-            foreach(GameObject boxGameObject in GameObject.FindGameObjectsWithTag("Box")) {
-                boxGOSurvives = false;
-                foreach(ObstacleData obstacle in obstacleData.obstacles_attributes)
+    IEnumerator UpdateWorldData()
+    {
+        // Update traffic lights lights
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLigtsEndpoint);
+        yield return www.SendWebRequest();
+ 
+        if (www.result != UnityWebRequest.Result.Success)
+            Debug.Log(www.error);
+        else 
+        {
+            trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
+            // Recieve tags from json and check for instantiation
+
+            foreach(GameObject trafficLightGameObject in GameObject.FindGameObjectsWithTag("Traffic light")) {
+                foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
                 {
-                    if (obstacle.tag == "box" && 
-                        boxGameObject.transform.position.x == obstacle.x && 
-                        boxGameObject.transform.position.z == obstacle.z) 
+                    if (trafficLightData.state) 
                     {
-                        boxGOSurvives = true;
+                        //Update light color to green
                     }
-                }  
-                if (!boxGOSurvives) {
-                    Destroy(boxGameObject);
+                    else
+                    {
+                        //Update light color to red
+                    }
                 }     
             }
         }

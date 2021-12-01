@@ -19,6 +19,7 @@ class Car(Agent):
         super().__init__(unique_id, model)
         self.destination = destination
         self.direction = ["left"]
+        self.current_direction = self.direction[0]
         self.pos = pos
 
         self.star_lists = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
@@ -30,7 +31,7 @@ class Car(Agent):
         
         self.next_star = self.star_lists[0]
         self.arrived = False
-        print(self.star_lists)
+        # print(self.star_lists)
 
 
     def step(self):
@@ -57,6 +58,7 @@ class Car(Agent):
         traffic_light_agent = [agent for agent in present_in_cell if isinstance(agent, Traffic_Light)]
         possible_steps = []
         if(len(road_agent) > 0):
+            print(f"There is a road at {self.pos}, actual directions{road_agent[0].direction}")
             if("right" in road_agent[0].direction):
                 possible_steps += [cell for cell in neighbour_cells if(cell[0] >= self.pos[0])]
             if("left" in road_agent[0].direction):
@@ -75,8 +77,7 @@ class Car(Agent):
                 possible_steps += [cell for cell in neighbour_cells if(cell[1] >= self.pos[1])]
             if("down" in self.direction):
                 possible_steps += [cell for cell in neighbour_cells if(cell[1] <= self.pos[1])]
-        print(possible_steps)
-        #possible_steps.append(self.pos)
+        print("Possible steps: ", possible_steps)
 
         if(self.destination in possible_steps):
             # Move to destination
@@ -104,7 +105,7 @@ class Car(Agent):
             road_agents = []
             for i in range(0, len(possible_steps)):
                 list_with_agent_in_cell = self.model.grid.get_cell_list_contents([possible_steps[i]])
-                print(list_with_agent_in_cell)
+                print("agents in adj cell: ", list_with_agent_in_cell)
                 road_agent_in_cell = [agent for agent in list_with_agent_in_cell if isinstance(agent, Road)]
                 traffic_light_agent_in_cell = [agent for agent in list_with_agent_in_cell if isinstance(agent, Traffic_Light)]
                 # If theres an empty cell or will be empty
@@ -137,6 +138,8 @@ class Car(Agent):
                 elif(len(traffic_light_agent) > 0):
                     traffic_light_agent[0].occupied_next = False
                 next_road_agent.occupied_next = True
+                self.current_direction = next_road_agent.direction[0] # ----
+                print(f"El agente {self.unique_id} se movera de {self.pos} a {cell_to_move}.")
                 self.model.grid.move_agent(self, cell_to_move)
             else:
                 print(f"El agente {self.unique_id} no se puede mover de {self.pos} a {cell_to_move}. No hay celdas vacias")

@@ -20,7 +20,7 @@ app = Flask("Traffic Model")
 def initModel():
     global traffic_model, number_agents, current_step
 
-    if request.method == 'POST':
+    if request.method == 'GET': # POST
         # number_agents = int(request.form.get('NAgents'))
         current_step = 0
         #max_steps = int(request.form.get('maxSteps'))
@@ -35,7 +35,7 @@ def getAgents():
     global traffic_model
 
     if request.method == 'GET':
-        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "unique_id": a.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Car)], key=lambda item: item["unique_id"])
+        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "current_direction": a.current_direction, "unique_id": a.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Car)], key=lambda item: item["unique_id"])
 #        for car_attributes in cars_attributes:
 #            print(cars_attributes)
         return jsonify({'cars_attributes': cars_attributes})
@@ -69,7 +69,7 @@ def getRoads():
     global traffic_model
 
     if request.method == 'GET':
-        road_attributes = sorted([{"x": x, "y":1, "z":z, "direction": a.direction, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Road)], key=lambda item: item["unique_id"])
+        road_attributes = sorted([{"x": x, "y":1, "z":z, "directions": a.direction, "unique_id": a.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() if isinstance(a, Road)], key=lambda item: item["unique_id"])
         return jsonify({'road_attributes':road_attributes})
 
 @app.route('/update', methods=['GET'])

@@ -47,7 +47,6 @@ class TrafficModel(Model):
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
-
         # N agent cars = len(self.destinations)
         # Add the agent to a random empty grid cell
         for i in destination_stars:
@@ -57,7 +56,7 @@ class TrafficModel(Model):
             pos = pos_gen(self.grid.width, self.grid.height)
             # Si no hay coche y hay road
             agents_in_pos = self.grid.get_cell_list_contents([pos])
-            print(agents_in_pos)
+            # print(agents_in_pos)
             car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
             road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
             while (road_agents == [] or car_agents != []):
@@ -65,10 +64,10 @@ class TrafficModel(Model):
                 agents_in_pos = self.grid.get_cell_list_contents([pos])
                 car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
                 road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
-            
-            
-            #pos = (17, 24)
-            print(f"Car pos: {pos}")
+            # (17, 1) direccion right
+
+            pos = (19, 1)
+            print(f"----------\nCar pos: {pos}")
             # car.destination = self.destinations[i].pos
             a = Car(i+1000, self, pos, matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
             self.schedule.add(a)
