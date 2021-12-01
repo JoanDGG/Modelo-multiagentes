@@ -110,7 +110,7 @@ public class AgentController : MonoBehaviour
     List<Vector3> newPositions;
     bool hold = false;
 
-    public GameObject[] carPrefabs = new GameObject[5];
+    public GameObject[] carPrefabs = new GameObject[6];
     public GameObject trafficLightPrefab, destinationPrefab, buildingPrefab, roadPrefab, reloadButton;
     public Text currentStep;
     //public int NAgents, NBoxes, width, height, maxShelves, maxSteps;
@@ -315,7 +315,7 @@ public class AgentController : MonoBehaviour
                             new Vector3(trafficLight.x, trafficLight.y, trafficLight.z), 
                             Quaternion.identity);
                 // for the light
-                // trafficLightInstance.transform.GetChild(0).gameObject.
+                // trafficLightInstance.transform.GetChild(0).gameObject.GetComponent<Light>().Color()
             }
         }
         //-----------------------------------------------------------------Destinations
@@ -333,8 +333,6 @@ public class AgentController : MonoBehaviour
                 Instantiate(destinationPrefab, 
                             new Vector3(destinationData.x, destinationData.y, destinationData.z), 
                             Quaternion.identity);
-                // for the light
-                // trafficLightInstance.transform.GetChild(0).gameObject.
             }
         }
         //--------------------------------------------------------------------Obstacles
@@ -353,8 +351,6 @@ public class AgentController : MonoBehaviour
                 Instantiate(buildingPrefab,
                             new Vector3(obstacleData.x, obstacleData.y, obstacleData.z), 
                             Quaternion.identity);
-                // for the light
-                // trafficLightInstance.transform.GetChild(0).gameObject.
             }
         }
         //------------------------------------------------------------------------Roads
@@ -370,7 +366,7 @@ public class AgentController : MonoBehaviour
             foreach(RoadData roadData in roadsData.road_attributes)
             {
                 // Check for roadsData.direction
-                roadInstance = Instantiate(roadPrefab,
+                GameObject roadInstance = Instantiate(roadPrefab,
                             new Vector3(roadData.x, roadData.y, roadData.z), 
                             Quaternion.identity);
                 // Scale roadInstance with widht, height and size of roadsData
