@@ -140,20 +140,17 @@ public class ModelController : MonoBehaviour
     private void Update() 
     {
         float t = timer/timeToUpdate;
-        // Smooth out the transition at start and end
         dt = t * t * ( 3f - 2f*t);
 
         if(timer >= timeToUpdate)
         {
             timer = 0;
             hold = true;
-            // Debug.Log("Update");
             StartCoroutine(UpdateSimulation());
         }
 
         if (!hold)
         {
-            // Move time from the last frame
             timer += Time.deltaTime;
             if(carsGameObjects.Length != 0 && oldPositions.Count != 0 && newPositions.Count != 0)
             {
