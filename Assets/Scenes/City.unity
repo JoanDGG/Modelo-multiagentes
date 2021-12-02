@@ -889,10 +889,14 @@ MonoBehaviour:
   - {fileID: 797792653227890693, guid: 10b2d408cccf14752a7df7a515cc4578, type: 3}
   - {fileID: 2245640704015312781, guid: a3157f010f6e247f19751410e3d96569, type: 3}
   treePrefabs:
-  - {fileID: 8460102657353490917, guid: 094514580aab00b47a414054960dad51, type: 3}
-  - {fileID: 5740725032565612835, guid: 1d8a5d0da1058a644842efcd4fd02432, type: 3}
-  - {fileID: 8469614014658933277, guid: 2ad83ecae56b2074f81f615f174eaea0, type: 3}
-  - {fileID: 7398797785483118272, guid: 974ac4cc877bb410696c1920e7f72335, type: 3}
+  - {fileID: 1949229835591866727, guid: 4efda54ad96349d418b1ceb5e665c280, type: 3}
+  - {fileID: 2879818232803516919, guid: f1c36e004352e45619c05b5b9a635199, type: 3}
+  - {fileID: 8751076071006579140, guid: 56da27a520b73e545ad7b3fcf74bffb7, type: 3}
+  - {fileID: 2019284258647166568, guid: 14a7983d4fca2a04b8975397693f4ceb, type: 3}
+  - {fileID: 5705756095222628353, guid: 00dbc77f9dc93ee4592475db171885fa, type: 3}
+  - {fileID: 5060048261438773199, guid: 8b5ffaa6627ab3d499c7d755ac42f7af, type: 3}
+  - {fileID: 8375882045774556723, guid: 653f9525e840adf48900a4e63bbc02a5, type: 3}
+  - {fileID: 48481960920710003, guid: d35885f0cd9ae484681b4b204d92e386, type: 3}
   trafficLightPrefab: {fileID: 3207849673546127459, guid: f1235a56feb8c439cb09f568a7cbebf2, type: 3}
   destinationPrefab: {fileID: 2194015151219239702, guid: 1bbe94c083c4960438104652782cc5fa, type: 3}
   roadPrefab: {fileID: 4778075493501853575, guid: 9d3c30dd558a34292bd4d50c5659314c, type: 3}
@@ -1517,6 +1521,10 @@ PrefabInstance:
     - target: {fileID: 1883695471306124325, guid: bcf4f52d7e7da446cb21ebe755ccbe3c, type: 3}
       propertyPath: m_Name
       value: Helicopter
+      objectReference: {fileID: 0}
+    - target: {fileID: 1883695471306124325, guid: bcf4f52d7e7da446cb21ebe755ccbe3c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcf4f52d7e7da446cb21ebe755ccbe3c, type: 3}

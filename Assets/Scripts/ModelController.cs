@@ -68,7 +68,7 @@ public class DestinationsData
 [System.Serializable]
 public class ObstaclesData
 {
-    public List<ObstacleData> obstacle_positions;
+    public List<ObstacleData> obstacles_attributes;
 }
 
 [System.Serializable]
@@ -105,11 +105,12 @@ public class ModelController : MonoBehaviour
     DestinationsData destinationsData;
     ObstaclesData obstaclesData;
     RoadsData roadsData;
-    GameObject[] carsGameObjects;
     List<Vector3> oldPositions;
     List<Vector3> newPositions;
     bool hold = false;
 
+    [System.NonSerialized]
+    public static GameObject[] carsGameObjects;
     public GameObject[] carPrefabs = new GameObject[6];
     public GameObject[] treePrefabs = new GameObject[11];
     public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab; // reloadButton
@@ -146,7 +147,7 @@ public class ModelController : MonoBehaviour
         {
             timer = 0;
             hold = true;
-            Debug.Log("Update");
+            // Debug.Log("Update");
             StartCoroutine(UpdateSimulation());
         }
 
@@ -154,14 +155,17 @@ public class ModelController : MonoBehaviour
         {
             // Move time from the last frame
             timer += Time.deltaTime;
-            for (int s = 0; s < carsGameObjects.Length; s++)
+            if(carsGameObjects.Length != 0 && oldPositions.Count != 0 && newPositions.Count != 0)
             {
-                Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
-                carsGameObjects[s].transform.localPosition = interpolated;
-                
-                Vector3 dir = oldPositions[s] - newPositions[s];
-                if(dir != new Vector3(0, 0, 0))
-                    carsGameObjects[s].transform.rotation = Quaternion.LookRotation(dir);
+                for (int s = 0; s < carsGameObjects.Length; s++)
+                {
+                    Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
+                    carsGameObjects[s].transform.localPosition = interpolated;
+                    
+                    Vector3 dir = oldPositions[s] - newPositions[s];
+                    if(dir != new Vector3(0, 0, 0))
+                        carsGameObjects[s].transform.rotation = Quaternion.LookRotation(dir);
+                }
             }
         }
     }
@@ -177,18 +181,6 @@ public class ModelController : MonoBehaviour
         {
             ModelData model = JsonUtility.FromJson<ModelData>(www.downloadHandler.text);
             currentStep.text = "Step " + model.currentStep;
-            /*
-            if(model.currentStep >= maxSteps)
-            {
-                currentStep.text += "\nSimulation complete.";
-                reloadButton.SetActive(true);
-            }
-            else
-            {
-                StartCoroutine(UpdateRobotsData());
-                StartCoroutine(UpdateObstaclesData());
-            }
-            */
             StartCoroutine(UpdateCarsData());
         }
     }
@@ -202,32 +194,6 @@ public class ModelController : MonoBehaviour
     }
     IEnumerator SendConfiguration()
     {
-        /*
-        WWWForm form = new WWWForm();
-        form.AddField("NAgents", NAgents.ToString());
-        form.AddField("NBoxes", NBoxes.ToString());
-        form.AddField("width", width.ToString());
-        form.AddField("height", height.ToString());
-        form.AddField("maxShelves", maxShelves.ToString());
-        form.AddField("maxSteps", maxSteps.ToString());
-        
-        UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
-        www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            //Debug.Log("Configuration upload complete!");
-            StartCoroutine(GetCarsData());
-            StartCoroutine(GetWorldData());
-        }
-        */
-        
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + sendConfigEndpoint);
         yield return www.SendWebRequest();
 
@@ -241,11 +207,14 @@ public class ModelController : MonoBehaviour
             height = gridData.height;
             width = gridData.width;
 
-            GameObject grass = Instantiate(grassPrefab, new Vector3(width, 0, height), Quaternion.identity);
-            grass.transform.localScale = new Vector3(width/4f, 1, height/4f);
-            grass.transform.localPosition = new Vector3(width, 0, height);
+            GameObject cenitalCamera = GameObject.Find("CenitalCamera");
+            cenitalCamera.transform.position = new Vector3(width/2f, 35, height/2f);
+            cenitalCamera.transform.rotation = Quaternion.Euler (90f, 0f, 0f);
             
-            Debug.Log("Model initialized");
+            GameObject grass = Instantiate(grassPrefab, cenitalCamera.transform.position, Quaternion.identity);
+            grass.transform.position = new Vector3(width/2f, 0, height/2f);
+            grass.transform.localScale = new Vector3(width/8f, 1/2f, height/8f);
+            
             StartCoroutine(GetCarsData());
         }
         
@@ -272,9 +241,8 @@ public class ModelController : MonoBehaviour
                 int randomCarIndex = Random.Range(0, carPrefabs.Length);
                 carsGameObjects[index_car] = Instantiate(carPrefabs[randomCarIndex],
                                                          carPosition, Quaternion.identity);
+                carsGameObjects[index_car].name = car.unique_id.ToString();
             }
-            Debug.Log("Cars instantiated");
-            Debug.Log(carsGameObjects.Length);
             StartCoroutine(GetWorldData());
         }
     }
@@ -289,8 +257,6 @@ public class ModelController : MonoBehaviour
         else 
         {
             carsData = JsonUtility.FromJson<CarsData>(www.downloadHandler.text);
-            Debug.Log("Cantidad de coches " + carsData.cars_attributes.Count);
-            // Store the old positions for each agent
             oldPositions = new List<Vector3>(newPositions);
             newPositions.Clear();
 
@@ -299,7 +265,6 @@ public class ModelController : MonoBehaviour
                 newPositions.Add(new Vector3(car.x, car.y, car.z));
             }
         }
-        Debug.Log("Cars updated");
         StartCoroutine(UpdateWorldData());
     }
 
@@ -314,14 +279,12 @@ public class ModelController : MonoBehaviour
         else 
         {
             trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
-            // Recieve tags from json and check for instantiation
             foreach(TrafficLightData trafficLight in trafficLightsData.traffic_light_attributes)
             {
                 GameObject trafficLightInstance = Instantiate(trafficLightPrefab, 
                             new Vector3(trafficLight.x, trafficLight.y, trafficLight.z), 
                             Quaternion.identity);
-                // for the light
-                // trafficLightInstance.transform.GetChild(0).gameObject.GetComponent<Light>().Color()
+                trafficLightInstance.name = trafficLight.unique_id;
             }
         }
         //-----------------------------------------------------------------Destinations
@@ -333,7 +296,6 @@ public class ModelController : MonoBehaviour
         else 
         {
             destinationsData = JsonUtility.FromJson<DestinationsData>(www.downloadHandler.text);
-            // Recieve tags from json and check for instantiation
             foreach(DestinationData destinationData in destinationsData.destination_positions)
             {
                 Instantiate(destinationPrefab, 
@@ -350,11 +312,9 @@ public class ModelController : MonoBehaviour
         else 
         {
             obstaclesData = JsonUtility.FromJson<ObstaclesData>(www.downloadHandler.text);
-            Debug.Log(obstaclesData.obstacle_positions.Count);
-            // Recieve tags from json and check for instantiation
-            foreach(ObstacleData obstacleData in obstaclesData.obstacle_positions)
+            Debug.Log("Obstacles: " + obstaclesData.obstacles_attributes.Count);
+            foreach(ObstacleData obstacleData in obstaclesData.obstacles_attributes)
             {
-                // Check for better instantiation of buildings
                 int randomTreeIndex = Random.Range(0, treePrefabs.Length);
                 Instantiate(treePrefabs[randomTreeIndex],
                             new Vector3(obstacleData.x, obstacleData.y, obstacleData.z), 
@@ -370,23 +330,37 @@ public class ModelController : MonoBehaviour
         else 
         {
             roadsData = JsonUtility.FromJson<RoadsData>(www.downloadHandler.text);
-            // Recieve tags from json and check for instantiation
             foreach(RoadData roadData in roadsData.road_attributes)
             {
-                // Check for roadsData.direction
-                GameObject roadInstance = Instantiate(roadPrefab,
-                            new Vector3(roadData.x, roadData.y, roadData.z), 
-                            Quaternion.identity);
-                // Scale roadInstance with widht, height and size of roadsData
+                if(roadData.directions.Length == 1)
+                {
+                    if(roadData.directions[0] == "up" || roadData.directions[0] == "down")
+                    {
+                        Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.Euler (0f, -90f, 0f));
+                    }
+                    else
+                    {
+                        Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.identity);
+                    }
+                }
+                else
+                {
+                    GameObject roadInstance = Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.identity);
+                    roadInstance.transform.GetChild(0).gameObject.SetActive(false);
+                }
             }
         }
-        Debug.Log("World instantiated");
         hold = false;
     }
 
     IEnumerator UpdateWorldData()
     {
-        // Update traffic lights lights
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLigtsEndpoint);
         yield return www.SendWebRequest();
  
@@ -395,25 +369,20 @@ public class ModelController : MonoBehaviour
         else 
         {
             trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
-            // Recieve tags from json and check for instantiation
 
-            foreach(GameObject trafficLightGameObject in GameObject.FindGameObjectsWithTag("Traffic light")) {
-                foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
+            foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
+            {
+                GameObject trafficLightGameObject = GameObject.Find(trafficLightData.unique_id);
+                if (trafficLightData.state)
                 {
-                    if (trafficLightData.state) 
-                    {
-                        //Update light color to green
-                        trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = new Color(0, 255, 7, 255);
-
-                    }
-                    else
-                    {
-                        //Update light color to red
-                        trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = new Color(255, 6, 0, 255);
-                    }
-                }     
+                    trafficLightGameObject.transform.GetChild(0)
+                        .gameObject.GetComponent<Light>().color = Color.green;
+                }
+                else
+                {
+                    trafficLightGameObject.transform.GetChild(0)
+                        .gameObject.GetComponent<Light>().color = Color.red;
+                }
             }
         }
         hold = false;
