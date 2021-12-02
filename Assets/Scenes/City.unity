@@ -1518,5 +1518,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Helicopter
       objectReference: {fileID: 0}
+    - target: {fileID: 1883695471306124325, guid: bcf4f52d7e7da446cb21ebe755ccbe3c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcf4f52d7e7da446cb21ebe755ccbe3c, type: 3}

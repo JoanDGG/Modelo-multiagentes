@@ -146,7 +146,7 @@ public class ModelController : MonoBehaviour
         {
             timer = 0;
             hold = true;
-            Debug.Log("Update");
+            // Debug.Log("Update");
             StartCoroutine(UpdateSimulation());
         }
 
@@ -241,11 +241,13 @@ public class ModelController : MonoBehaviour
             height = gridData.height;
             width = gridData.width;
 
-            GameObject grass = Instantiate(grassPrefab, new Vector3(width, 0, height), Quaternion.identity);
+            GameObject.Find("CenitalCamera").gameObject.transform.position = new Vector3(3f*width/2f, 0, 3f*width/2f);
+
+            GameObject grass = Instantiate(grassPrefab, new Vector3(3f*width/2f, 0, 3f*width/2f), Quaternion.identity);
             grass.transform.localScale = new Vector3(width/4f, 1, height/4f);
             grass.transform.localPosition = new Vector3(width, 0, height);
             
-            Debug.Log("Model initialized");
+            // Debug.Log("Model initialized");
             StartCoroutine(GetCarsData());
         }
         
@@ -273,8 +275,8 @@ public class ModelController : MonoBehaviour
                 carsGameObjects[index_car] = Instantiate(carPrefabs[randomCarIndex],
                                                          carPosition, Quaternion.identity);
             }
-            Debug.Log("Cars instantiated");
-            Debug.Log(carsGameObjects.Length);
+            // Debug.Log("Cars instantiated");
+            // Debug.Log(carsGameObjects.Length);
             StartCoroutine(GetWorldData());
         }
     }
@@ -289,7 +291,7 @@ public class ModelController : MonoBehaviour
         else 
         {
             carsData = JsonUtility.FromJson<CarsData>(www.downloadHandler.text);
-            Debug.Log("Cantidad de coches " + carsData.cars_attributes.Count);
+            // Debug.Log("Cantidad de coches " + carsData.cars_attributes.Count);
             // Store the old positions for each agent
             oldPositions = new List<Vector3>(newPositions);
             newPositions.Clear();
@@ -299,7 +301,7 @@ public class ModelController : MonoBehaviour
                 newPositions.Add(new Vector3(car.x, car.y, car.z));
             }
         }
-        Debug.Log("Cars updated");
+        // Debug.Log("Cars updated");
         StartCoroutine(UpdateWorldData());
     }
 
@@ -373,14 +375,32 @@ public class ModelController : MonoBehaviour
             // Recieve tags from json and check for instantiation
             foreach(RoadData roadData in roadsData.road_attributes)
             {
-                // Check for roadsData.direction
-                GameObject roadInstance = Instantiate(roadPrefab,
-                            new Vector3(roadData.x, roadData.y, roadData.z), 
-                            Quaternion.identity);
-                // Scale roadInstance with widht, height and size of roadsData
+                // Check for roadsData.directions
+                if(roadData.directions.Length == 1)
+                {
+                    if(roadData.directions[0] == "up" || roadData.directions[0] == "down")
+                    {
+                        Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.Euler (0f, -90f, 0f));
+                    }
+                    else
+                    {
+                        Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.identity);
+                    }
+                }
+                else
+                {
+                    GameObject roadInstance = Instantiate(roadPrefab,
+                                new Vector3(roadData.x, roadData.y, roadData.z), 
+                                Quaternion.identity);
+                    roadInstance.transform.GetChild(0).gameObject.SetActive(false);
+                }
             }
         }
-        Debug.Log("World instantiated");
+        // Debug.Log("World instantiated");
         hold = false;
     }
 
@@ -398,20 +418,21 @@ public class ModelController : MonoBehaviour
             // Recieve tags from json and check for instantiation
 
             foreach(GameObject trafficLightGameObject in GameObject.FindGameObjectsWithTag("Traffic light")) {
+                Debug.Log(trafficLightGameObject.name);
                 foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
                 {
                     if (trafficLightData.state) 
                     {
                         //Update light color to green
                         trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = new Color(0, 255, 7, 255);
+                            .gameObject.GetComponent<Light>().color = Color.green;
 
                     }
                     else
                     {
                         //Update light color to red
                         trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = new Color(255, 6, 0, 255);
+                            .gameObject.GetComponent<Light>().color = Color.red;
                     }
                 }     
             }

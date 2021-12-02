@@ -48,7 +48,7 @@ def getTraffic_Lights():
     global traffic_model
 
     if request.method == 'GET':
-        traffic_light_attributes = sorted([{"x": x, "y":2.5, "z":z, "state": b.state, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Traffic_Light)], key=lambda item: item["unique_id"])
+        traffic_light_attributes = sorted([{"x": x, "y":1.01, "z":z, "state": b.state, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Traffic_Light)], key=lambda item: item["unique_id"])
         return jsonify({'traffic_light_attributes':traffic_light_attributes})
 
 @app.route('/getDestinations', methods=['GET'])
@@ -56,7 +56,7 @@ def getDestinations():
     global traffic_model
 
     if request.method == 'GET':
-        destination_positions = sorted([{"x": x, "y":0.1, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Destination)], key=lambda item: item["unique_id"])
+        destination_positions = sorted([{"x": x, "y":0.01, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Destination)], key=lambda item: item["unique_id"])
         return jsonify({'destination_positions':destination_positions})
 
 @app.route('/getObstacles', methods=['GET'])
