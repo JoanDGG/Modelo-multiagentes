@@ -94,14 +94,14 @@ public class ModelController : MonoBehaviour
     // private url
     // string serverUrl = "http://localhost:8585";
     
-    // url for small map
+    // url for small map (1 car)
     // string serverUrl = "https://original-map.mybluemix.net";
     
-    // url for big map
-    // string serverUrl = "https://big-map.mybluemix.net";
+    // url for big map (60 cars)
+    string serverUrl = "https://big-map.mybluemix.net";
 
-    // url for original map
-    string serverUrl = "https://map-repo-profe.mybluemix.net";
+    // url for original map (12 cars)
+    // string serverUrl = "https://map-repo-profe.mybluemix.net";
     string sendConfigEndpoint = "/init";
     string getCarsEndpoint = "/getCarAgents";
     string getTrafficLigtsEndpoint = "/getTraffic_Lights";
