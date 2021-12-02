@@ -51,6 +51,11 @@ class TrafficModel(Model):
         # Add the agent to a random empty grid cell
         print(destination_stars)
         for i in destination_stars:
+            """a = Car(i+1000, self, (9, 22), matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
+            self.schedule.add(a)
+
+            self.grid.place_agent(a, (9, 22))"""
+
             # Place car where there is no other car and is a Road
             
             pos_gen = lambda w, h: (self.random.randrange(w), self.random.randrange(h))
