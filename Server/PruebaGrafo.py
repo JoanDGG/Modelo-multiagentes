@@ -81,4 +81,13 @@ def intersection_directions():
 
     return inter_position_to_dirs
 
+def add_to_20_pos(prev_20_pos, position):
+    if len(prev_20_pos) == 20:
+        return prev_20_pos[1:] + [position]
+    else:
+        return prev_20_pos + [position]
+
+
 inters_positions_to_dirs = intersection_directions()
+
+

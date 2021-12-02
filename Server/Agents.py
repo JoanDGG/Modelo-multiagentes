@@ -22,6 +22,7 @@ class Car(Agent):
         self.current_direction = self.direction[0]
         self.pos = pos
         self.original = pos
+        self.previous_20_pos = []
 
         self.star_lists = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
                                             coord2matrix(self.destination[0], self.destination[1], self.model.grid.height))
@@ -42,6 +43,7 @@ class Car(Agent):
 
         # Check if actual cell is destination
         present_in_cell = self.model.grid.get_cell_list_contents([self.pos])
+        #print("present in cell is", present_in_cell)
         destination_agent = [agent for agent in present_in_cell if isinstance(agent, Destination)]
         # Checar si es false cuando no hay
         if(destination_agent):
@@ -53,21 +55,31 @@ class Car(Agent):
             moore=False, # Moore neighborhood (including diagonals)
             include_center=True)
         road_agent = [agent for agent in present_in_cell if isinstance(agent, Road)]
+        traffic_agent = [agent for agent in present_in_cell if isinstance(agent, Traffic_Light)]
         
         if(self.destination in neighbour_cells):
             # Move to destination
             # print("Destination found")
             self.model.grid.move_agent(self, self.destination)
-            road_agent[0].occupied_next = False
+            if (len(road_agent) > 0):
+                road_agent[0].occupied_next = False
+            if (len(traffic_agent) > 0):
+                traffic_agent[0].occupied_next = False 
             self.arrived = True
             return
-        # print(f"Searching for next star {self.next_star} from {self.pos}")
-        # print(self.star_lists)
-        # print(f"Origin: {self.original}")
+        print(f"Searching for next star {self.next_star} from {self.pos}")
+        print(self.star_lists)
+        print(f"Origin: {self.original}")
         # Get the road agent of actual cell
         # PENDIENTE: eliminar celdas que no son del carril opuesto
         traffic_light_agent = [agent for agent in present_in_cell if isinstance(agent, Traffic_Light)]
         possible_steps = []
+        #if self.need_help == True and self.times_left > 0:
+        #    self.direction = ["right", "left", "up", "down"]
+        #    self.times_left -= 1
+        #else:
+        #    self.times_left = 6
+        #    self.need_help = False
         if(len(road_agent) > 0):
             # print(f"There is a road at {self.pos}, actual directions{road_agent[0].direction}")
             if("right" in road_agent[0].direction):
@@ -100,6 +112,10 @@ class Car(Agent):
             if(self.next_star != self.destination):
                 star_index = self.star_lists.index(self.next_star)
                 self.next_star = self.star_lists[star_index + 1]
+                #self.direction = ["right", "left", "up", "down"]
+                #self.need_help = True
+
+
             else:
                 self.arrived = True
         # Calculate cell_to_move:
@@ -123,6 +139,62 @@ class Car(Agent):
                 if not traffic_light_agent_in_cell[0].occupied_next:
                     empty_positions.append(possible_steps[i])
                     road_agents.append(traffic_light_agent_in_cell[0])
+        """
+        can_get_to_next_star = False
+
+        for direction in self.direction:
+            if direction == "right":
+                # The y of star is quite close, my x is smaller equal than star x.
+                print("difference of ys is ", (self.pos[1] - self.next_star[1]))
+                print("am i to the left of star?:", self.pos[0] <= self.next_star[0])
+                if (self.pos[1] - self.next_star[1]) in [-2, -1, 0, 1, 2] and self.pos[0] <= self.next_star[0]:
+                    can_get_to_next_star = True
+            elif direction == "left":
+                # The y of star is quite close, my x is higher equal than star x.
+                print("difference of ys is ", (self.pos[1] - self.next_star[1]))
+                print("am i to the right of star?:", self.pos[0] >= self.next_star[0])
+                if (self.pos[1] - self.next_star[1]) in [-2, -1, 0, 1, 2] and self.pos[0] >= self.next_star[0]:
+                    print("good on left")
+                    can_get_to_next_star = True
+            elif direction == "up":
+                print("difference of xs is ", (self.pos[0] - self.next_star[0]))
+                print("am i below of star?:", self.pos[0] <= self.next_star[0])
+                # The x of star is quite close, my y is smaller equal than star y.
+                if (self.pos[0] - self.next_star[0]) in [-2, -1, 0, 1, 2] and self.pos[1] <= self.next_star[1]:
+                    print("good on up")
+                    can_get_to_next_star = True
+            elif direction == "down":
+                # The x of star is quite close, my y is higher equal than star y.
+                print("difference of xs is ", (self.pos[0] - self.next_star[0]))
+                print("am i above of star?:", self.pos[1] >= self.next_star[1])
+                if (self.pos[0] - self.next_star[0]) in [-2, -1, 0, 1, 2] and self.pos[1] >= self.next_star[1]:
+                    print("good on down")
+                    can_get_to_next_star = True
+
+        if can_get_to_next_star == False:
+            print(" I cant get there please ")
+            self.star_lists = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
+                                                coord2matrix(self.destination[0], self.destination[1], self.model.grid.height))
+            # print("with google maps, i know my intersections ", self.star_lists)
+            for ind, star in enumerate(self.star_lists):
+                self.star_lists[ind] = matrix2coord(star[0], star[1], self.model.grid.height)
+            # print("i flipped them ", self.star_lists)
+            
+            self.next_star = self.star_lists[0]
+            #self.direction = ["right", "left", "up", "down"]
+            """
+
+        if self.previous_20_pos.count(self.pos) > 6:
+            self.star_lists = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
+                                                coord2matrix(self.destination[0], self.destination[1], self.model.grid.height))
+            # print("with google maps, i know my intersections ", self.star_lists)
+            for ind, star in enumerate(self.star_lists):
+                self.star_lists[ind] = matrix2coord(star[0], star[1], self.model.grid.height)
+            # print("i flipped them ", self.star_lists)
+            
+            self.next_star = self.star_lists[0]
+
+   
 
         distance = math.inf
         index_min_distance = None
@@ -147,6 +219,8 @@ class Car(Agent):
             #self.current_direction = next_road_agent.direction[0] # ----
             # print(f"El agente {self.unique_id} se movera de {self.pos} a {cell_to_move}.")
             self.model.grid.move_agent(self, cell_to_move)
+            self.previous_20_pos = add_to_20_pos(self.previous_20_pos, cell_to_move)
+            print(self.previous_20_pos)
         else:
             pass # print(f"El agente {self.unique_id} no se puede mover de {self.pos} a {cell_to_move}. No hay celdas vacias")
 
