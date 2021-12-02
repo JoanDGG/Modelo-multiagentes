@@ -119,7 +119,7 @@ class Car(Agent):
                     empty_positions.append(possible_steps[i])
                     road_agents.append(traffic_light_agent_in_cell[0])
 
-        if self.previous_20_pos.count(self.pos) > 6:
+        if self.previous_20_pos.count(self.pos) > 5:
             # Recalculate stars list if stuck
             self.stars_list = google_maps_stars(coord2matrix(self.pos[0], self.pos[1], self.model.grid.height),
                                                 coord2matrix(self.destination[0], self.destination[1], self.model.grid.height))
