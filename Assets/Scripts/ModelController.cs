@@ -110,7 +110,7 @@ public class ModelController : MonoBehaviour
     bool hold = false;
 
     [System.NonSerialized]
-    public static GameObject[] carsGameObjects;
+    public GameObject[] carsGameObjects;
     public GameObject[] carPrefabs = new GameObject[6];
     public GameObject[] treePrefabs = new GameObject[11];
     public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab, cenitalCamera; // reloadButton
@@ -220,13 +220,19 @@ public class ModelController : MonoBehaviour
             height = gridData.height;
             width = gridData.width;
 
-            cenitalCamera.transform.position = new Vector3(width/2f, 35, height/2f);
+            cenitalCamera.transform.position = new Vector3(width/2f, 20, height/2f);
             cenitalCamera.transform.rotation = Quaternion.Euler (90f, 0f, 0f);
             
             GameObject grass = Instantiate(grassPrefab, cenitalCamera.transform.position, Quaternion.identity);
             grass.transform.position = new Vector3(width/2f, 0, height/2f);
             grass.transform.localScale = new Vector3(width/8f, 1/2f, height/8f);
-            
+            ChangeCamera.viewCamerasList = GameObject.FindGameObjectsWithTag("ViewCamera");
+            foreach (GameObject camera in ChangeCamera.viewCamerasList)  
+            {
+                camera.SetActive(false);
+            }
+            ChangeCamera.viewCamerasList[0].SetActive(true);
+            GameObject.Find("TxtVista").GetComponent<Text>().text = ChangeCamera.viewCamerasList[0].name;
             StartCoroutine(GetCarsData());
         }
         
@@ -256,6 +262,7 @@ public class ModelController : MonoBehaviour
                 carsGameObjects[index_car].name = car.unique_id.ToString();
                 carsArrived[index_car] = false;
             }
+            ChangeCamera.carsCamerasList = carsGameObjects;
             StartCoroutine(GetWorldData());
         }
     }

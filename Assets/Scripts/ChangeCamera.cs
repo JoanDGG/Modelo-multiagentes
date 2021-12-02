@@ -7,7 +7,7 @@ using System.Linq;
 public class ChangeCamera : MonoBehaviour
 {
     // Lista de camaras vista
-    private GameObject[] viewCamerasList;
+    public static GameObject[] viewCamerasList;
     private int indexCameraViewList = 0;
 
     //Elementos del Canvas
@@ -17,21 +17,20 @@ public class ChangeCamera : MonoBehaviour
     
 
     // Cars
-    private GameObject[] carsCamerasList;
+    public static GameObject[] carsCamerasList;
     private int indexCameraCarList = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         if (viewCamerasList == null)                    { viewCamerasList = GameObject.FindGameObjectsWithTag("ViewCamera"); }
-        //if (carsCamerasList == null)                    { carsCamerasList = GameObject.FindGameObjectsWithTag("Car").OrderBy( car => car.name ).ToArray();  }
-        carsCamerasList = ModelController.carsGameObjects;
 
-        //foreach (GameObject camera in carsCamerasList)  { camera.gameObject.transform.GetChild(0).gameObject.SetActive(false); }
-        foreach (GameObject camera in viewCamerasList)  { camera.SetActive(false); }
+        foreach (GameObject camera in viewCamerasList)  
+        { 
+            camera.SetActive(false);
+        }
         viewCamerasList[indexCameraViewList].SetActive(true);
         textCurrentCamera.text = viewCamerasList[indexCameraViewList].name;
-
     }
 
     // Update is called once per frame
@@ -39,7 +38,7 @@ public class ChangeCamera : MonoBehaviour
     {
         
     }
-
+    
     public void ChangeNextView()
     {
         indexCameraViewList += 1;

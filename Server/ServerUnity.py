@@ -52,7 +52,7 @@ def getObstacles():
     global traffic_model
 
     if request.method == 'GET':
-        obstacle_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Obstacle)], key=lambda item: item["unique_id"])
+        obstacle_positions = sorted([{"x": x, "y":0.01, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Obstacle)], key=lambda item: item["unique_id"])
         return jsonify({'obstacles_attributes':obstacle_positions})
 
 @app.route('/getRoads', methods=['GET'])
