@@ -49,8 +49,6 @@ def getTraffic_Lights():
 
     if request.method == 'GET':
         traffic_light_attributes = sorted([{"x": x, "y":1.01, "z":z, "state": b.state, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Traffic_Light)], key=lambda item: item["unique_id"])
-        for traffic_light in traffic_light_attributes:
-            print(traffic_light["unique_id"], traffic_light["state"])
         return jsonify({'traffic_light_attributes':traffic_light_attributes})
 
 @app.route('/getDestinations', methods=['GET'])
@@ -67,6 +65,7 @@ def getObstacles():
 
     if request.method == 'GET':
         obstacle_positions = sorted([{"x": x, "y":1, "z":z, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Obstacle)], key=lambda item: item["unique_id"])
+        print("Obstacles-> ",len(obstacle_positions))
         return jsonify({'obstacles_attributes':obstacle_positions})
 
 @app.route('/getRoads', methods=['GET'])
