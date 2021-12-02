@@ -37,7 +37,7 @@ def getAgents():
     global traffic_model
 
     if request.method == 'GET':
-        cars_attributes = sorted([{"x": x, "y": 0.3, "z": z, "unique_id": b.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Car)], key=lambda item: item["unique_id"])
+        cars_attributes = sorted([{"x": x, "y": 0.25, "z": z, "unique_id": b.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Car)], key=lambda item: item["unique_id"])
         # print("Model at getCarAgents: ", traffic_model)
         # for car_attributes in cars_attributes:
         #     print(car_attributes)

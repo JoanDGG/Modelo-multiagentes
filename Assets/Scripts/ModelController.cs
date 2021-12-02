@@ -241,10 +241,13 @@ public class ModelController : MonoBehaviour
             height = gridData.height;
             width = gridData.width;
 
-            GameObject.Find("CenitalCamera").gameObject.transform.position = new Vector3(3f*width/2f, 0, 3f*width/2f);
+            GameObject.Find("CenitalCamera").gameObject.transform.position = new Vector3(width/2f, 0, width/2f);
 
-            GameObject grass = Instantiate(grassPrefab, new Vector3(3f*width/2f, 0, 3f*width/2f), Quaternion.identity);
-            grass.transform.localScale = new Vector3(width/4f, 1, height/4f);
+            GameObject grass = Instantiate(grassPrefab, new Vector3(-width/2f, 0, -height/2f), Quaternion.identity);
+            Debug.Log(grass.transform.position);
+            grass.transform.position = new Vector3(width/2f, 0, height/2f);
+            Debug.Log(grass.transform.position);
+            grass.transform.localScale = new Vector3(width/8f, 1/2f, height/8f);
             grass.transform.localPosition = new Vector3(width, 0, height);
             
             // Debug.Log("Model initialized");
@@ -322,6 +325,7 @@ public class ModelController : MonoBehaviour
                 GameObject trafficLightInstance = Instantiate(trafficLightPrefab, 
                             new Vector3(trafficLight.x, trafficLight.y, trafficLight.z), 
                             Quaternion.identity);
+                trafficLightInstance.name = trafficLight.unique_id;
                 // for the light
                 // trafficLightInstance.transform.GetChild(0).gameObject.GetComponent<Light>().Color()
             }
@@ -421,9 +425,10 @@ public class ModelController : MonoBehaviour
                 Debug.Log(trafficLightGameObject.name);
                 foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
                 {
-                    if (trafficLightData.state) 
+                    if (trafficLightData.unique_id == trafficLightGameObject.name && trafficLightData.state)
                     {
                         //Update light color to green
+                        Debug.Log("Green for traffic light " + trafficLightGameObject.name);
                         trafficLightGameObject.transform.GetChild(0)
                             .gameObject.GetComponent<Light>().color = Color.green;
 
