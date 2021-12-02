@@ -49,6 +49,7 @@ class TrafficModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
         # N agent cars = len(self.destinations)
         # Add the agent to a random empty grid cell
+        print(destination_stars)
         for i in destination_stars:
             # Place car where there is no other car and is a Road
             
@@ -65,7 +66,7 @@ class TrafficModel(Model):
                 car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
                 road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
             #pos = (19, 1)
-            print(f"----------\nCar pos: {pos}")
+            #print(f"----------\nCar pos: {pos}")
             # car.destination = self.destinations[i].pos
             a = Car(i+1000, self, pos, matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
             self.schedule.add(a)

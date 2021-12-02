@@ -37,7 +37,7 @@ def getAgents():
     global traffic_model
 
     if request.method == 'GET':
-        cars_attributes = sorted([{"x": x, "y": 1, "z": z, "unique_id": b.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Car)], key=lambda item: item["unique_id"])
+        cars_attributes = sorted([{"x": x, "y": 0.3, "z": z, "unique_id": b.unique_id} for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Car)], key=lambda item: item["unique_id"])
         # print("Model at getCarAgents: ", traffic_model)
         # for car_attributes in cars_attributes:
         #     print(car_attributes)
@@ -72,7 +72,7 @@ def getRoads():
     global traffic_model
 
     if request.method == 'GET':
-        road_attributes = sorted([{"x": x, "y":0.1, "z":z, "directions": b.direction, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Road)], key=lambda item: item["unique_id"])
+        road_attributes = sorted([{"x": x, "y":0.01, "z":z, "directions": b.direction, "unique_id": b.unique_id}  for (a, x, z) in traffic_model.grid.coord_iter() for b in a if isinstance(b, Road)], key=lambda item: item["unique_id"])
         return jsonify({'road_attributes':road_attributes})
 
 @app.route('/update', methods=['GET'])
