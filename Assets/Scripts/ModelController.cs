@@ -91,8 +91,17 @@ public class ModelData
 
 public class ModelController : MonoBehaviour
 {
-    // private string url = "https://boids.us-south.cf.appdomain.cloud/";
-    string serverUrl = "http://localhost:8585";
+    // private url
+    // string serverUrl = "http://localhost:8585";
+    
+    // url for small map
+    // string serverUrl = "https://original-map.mybluemix.net";
+    
+    // url for big map
+    // string serverUrl = "https://big-map.mybluemix.net";
+
+    // url for original map
+    string serverUrl = "https://map-repo-profe.mybluemix.net";
     string sendConfigEndpoint = "/init";
     string getCarsEndpoint = "/getCarAgents";
     string getTrafficLigtsEndpoint = "/getTraffic_Lights";
@@ -113,7 +122,7 @@ public class ModelController : MonoBehaviour
     public GameObject[] carsGameObjects;
     public GameObject[] carPrefabs = new GameObject[6];
     public GameObject[] treePrefabs = new GameObject[11];
-    public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab, cenitalCamera; // reloadButton
+    public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab, cenitalCamera;
     public Text currentStep;
     //public int NAgents, NBoxes, width, height, maxShelves, maxSteps;
     public float timeToUpdate = 1.5f, timer, dt;

@@ -486,7 +486,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Vista
+  m_Text: View
 --- !u!222 &447167956
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -631,7 +631,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Ingrese n\xFAmero de Coche"
+  m_Text: Input car index
 --- !u!222 &693199022
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -710,7 +710,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cambiar Coche
+  m_Text: Change car view
 --- !u!222 &831549780
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1241,7 +1241,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cambiar Vista
+  m_Text: Change camera view
 --- !u!222 &1755405964
 CanvasRenderer:
   m_ObjectHideFlags: 0
