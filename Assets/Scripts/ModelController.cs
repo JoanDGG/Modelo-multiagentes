@@ -1,6 +1,6 @@
 // TC2008B. Sistemas Multiagentes y Gráficas Computacionales
-// C# client to interact with Python. Based on the code provided by Sergio Ruiz.
-// Octavio Navarro. October 2021
+// C# client to interact with Python. Based on the code provided by Sergio Ruiz and Octavio Navarro.
+// Last modified 2 December 2021
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ using UnityEngine.Networking;
 public class CarData
 {
     public float x, y, z;
-    //public string current_direction;
     public int unique_id;
+    public bool arrived;
 }
 
 [System.Serializable]
@@ -113,13 +113,14 @@ public class ModelController : MonoBehaviour
     public static GameObject[] carsGameObjects;
     public GameObject[] carPrefabs = new GameObject[6];
     public GameObject[] treePrefabs = new GameObject[11];
-    public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab; // reloadButton
+    public GameObject trafficLightPrefab, destinationPrefab, roadPrefab, grassPrefab, cenitalCamera; // reloadButton
     public Text currentStep;
     //public int NAgents, NBoxes, width, height, maxShelves, maxSteps;
     public float timeToUpdate = 1.5f, timer, dt;
 
     private float width;
     private float height;
+    private bool[] carsArrived;
 
     void Start()
     {
@@ -177,8 +178,23 @@ public class ModelController : MonoBehaviour
         else 
         {
             ModelData model = JsonUtility.FromJson<ModelData>(www.downloadHandler.text);
-            currentStep.text = "Step " + model.currentStep;
-            StartCoroutine(UpdateCarsData());
+
+            int carsCount = 0;
+            foreach (bool carArrived in carsArrived)
+            {
+                if(carArrived)
+                    carsCount++;
+            }
+            currentStep.text = "Step " + model.currentStep 
+                + "\nCars arrived " + carsCount + " / " + carsGameObjects.Length;
+            if(carsCount >= carsGameObjects.Length)
+            {
+                currentStep.text += "\nAll cars have arrived!";
+            }
+            else
+            {
+                StartCoroutine(UpdateCarsData());
+            }
         }
     }
 
@@ -204,7 +220,6 @@ public class ModelController : MonoBehaviour
             height = gridData.height;
             width = gridData.width;
 
-            GameObject cenitalCamera = GameObject.Find("CenitalCamera");
             cenitalCamera.transform.position = new Vector3(width/2f, 35, height/2f);
             cenitalCamera.transform.rotation = Quaternion.Euler (90f, 0f, 0f);
             
@@ -228,8 +243,8 @@ public class ModelController : MonoBehaviour
         {
             carsData = JsonUtility.FromJson<CarsData>(www.downloadHandler.text);
             carsGameObjects = new GameObject[carsData.cars_attributes.Count];
+            carsArrived = new bool[carsData.cars_attributes.Count];
 
-            // Store the old positions for each agent
             for (int index_car = 0; index_car < carsData.cars_attributes.Count; index_car++)
             {
                 CarData car = carsData.cars_attributes[index_car];
@@ -239,6 +254,7 @@ public class ModelController : MonoBehaviour
                 carsGameObjects[index_car] = Instantiate(carPrefabs[randomCarIndex],
                                                          carPosition, Quaternion.identity);
                 carsGameObjects[index_car].name = car.unique_id.ToString();
+                carsArrived[index_car] = false;
             }
             StartCoroutine(GetWorldData());
         }
@@ -260,6 +276,8 @@ public class ModelController : MonoBehaviour
             for(int index_car = 0; index_car < carsData.cars_attributes.Count; index_car++) {
                 CarData car = carsData.cars_attributes[index_car];
                 newPositions.Add(new Vector3(car.x, car.y, car.z));
+                if(car.arrived)
+                    carsArrived[index_car] = true;
             }
         }
         StartCoroutine(UpdateWorldData());
@@ -309,7 +327,6 @@ public class ModelController : MonoBehaviour
         else 
         {
             obstaclesData = JsonUtility.FromJson<ObstaclesData>(www.downloadHandler.text);
-            Debug.Log("Obstacles: " + obstaclesData.obstacles_attributes.Count);
             foreach(ObstacleData obstacleData in obstaclesData.obstacles_attributes)
             {
                 int randomTreeIndex = Random.Range(0, treePrefabs.Length);

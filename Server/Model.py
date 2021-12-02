@@ -1,3 +1,7 @@
+# TC2008B. Sistemas Multiagentes y Gráficas Computacionales
+# Python mesa back-end for the model. Based on the code provided by Octavio Navarro.
+# Last modified 2 December 2021
+
 from mesa import Model
 from mesa.time import RandomActivation
 from mesa.space import MultiGrid
@@ -7,22 +11,23 @@ class TrafficModel(Model):
     """ 
     Creates a new model with random agents.
     Args:
-        N: Number of agents in the simulation
+        destinations: List of destination agents
+        data_dictionary: Dictionary of direction depending on the cell's symbol
         height, width: The size of the grid to model
+        running: Running state of the model
     """
     def __init__(self):
 
         self.destinations = []
         
-        dataDictionary = {">" : "right",
+        data_dictionary = {">" : "right",
                           "<" : "left",
                           "^" : "up",
                           "v" : "down"}
         
-
         with open('base.txt') as baseFile:
             lines = baseFile.readlines()
-            self.width = len(lines[0])-1  # because of /n.
+            self.width = len(lines[0])-1
             self.height = len(lines)
 
             self.grid = MultiGrid(self.width, self.height,torus = False) 
@@ -35,7 +40,7 @@ class TrafficModel(Model):
                         try:
                             agent = Road(f"r{r*self.width+c}", self, inters_positions_to_dirs[road_pos])
                         except:
-                            agent = Road(f"r{r*self.width+c}", self, [dataDictionary[col]])
+                            agent = Road(f"r{r*self.width+c}", self, [data_dictionary[col]])
                         self.grid.place_agent(agent, road_pos)
                     elif col in ["S", "s"]:
                         agent = Traffic_Light(f"tl{r*self.width+c}", self, False if col == "S" else True)
@@ -47,32 +52,11 @@ class TrafficModel(Model):
                     elif col == "D":
                         agent = Destination(f"d{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
-        # N agent cars = len(self.destinations)
+
         # Add the agent to a random empty grid cell
-        print(destination_stars)
         for i in destination_stars:
-            """a = Car(i+1000, self, (9, 22), matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
-            self.schedule.add(a)
-
-            self.grid.place_agent(a, (9, 22))"""
-
             # Place car where there is no other car and is a Road
-            
-            pos_gen = lambda w, h: (self.random.randrange(w), self.random.randrange(h))
-            pos = pos_gen(self.grid.width, self.grid.height)
-            # Si no hay coche y hay road
-            agents_in_pos = self.grid.get_cell_list_contents([pos])
-            # print(agents_in_pos)
-            car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
-            road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
-            while (road_agents == [] or car_agents != []):
-                pos = pos_gen(self.grid.width, self.grid.height)
-                agents_in_pos = self.grid.get_cell_list_contents([pos])
-                car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
-                road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
-            #pos = (19, 1)
-            #print(f"----------\nCar pos: {pos}")
-            # car.destination = self.destinations[i].pos
+            pos = self.instantiateCar()
             a = Car(i+1000, self, pos, matrix2coord(destination_stars[i][0], destination_stars[i][1], self.grid.height))
             self.schedule.add(a)
             self.grid.place_agent(a, pos)
@@ -87,3 +71,16 @@ class TrafficModel(Model):
                 for agent in agents:
                     if isinstance(agent, Traffic_Light):
                         agent.state = not agent.state
+
+    def instantiateCar(self):
+        pos_gen = lambda w, h: (self.random.randrange(w), self.random.randrange(h))
+        pos = pos_gen(self.grid.width, self.grid.height)
+        agents_in_pos = self.grid.get_cell_list_contents([pos])
+        car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
+        road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
+        while (road_agents == [] or car_agents != []):
+            pos = pos_gen(self.grid.width, self.grid.height)
+            agents_in_pos = self.grid.get_cell_list_contents([pos])
+            car_agents = [agent for agent in agents_in_pos if isinstance(agent, Car)]
+            road_agents = [agent for agent in agents_in_pos if isinstance(agent, Road)]
+        return pos

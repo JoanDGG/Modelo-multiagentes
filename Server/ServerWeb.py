@@ -1,3 +1,7 @@
+# TC2008B. Sistemas Multiagentes y Gráficas Computacionales
+# Python flask server to interact with Unity. Based on the code provided by Octavio Navarro.
+# Last modified 2 December 2021
+
 from Agents import *
 from Model import TrafficModel
 from mesa.visualization.modules import CanvasGrid
@@ -46,8 +50,6 @@ with open('base.txt') as baseFile:
     lines = baseFile.readlines()
     width = len(lines[0])-1
     height = len(lines)
-
-# model_params = {"N":5}
 
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
 

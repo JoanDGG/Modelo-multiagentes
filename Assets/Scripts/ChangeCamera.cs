@@ -27,7 +27,7 @@ public class ChangeCamera : MonoBehaviour
         //if (carsCamerasList == null)                    { carsCamerasList = GameObject.FindGameObjectsWithTag("Car").OrderBy( car => car.name ).ToArray();  }
         carsCamerasList = ModelController.carsGameObjects;
 
-        foreach (GameObject camera in carsCamerasList)  { camera.gameObject.transform.GetChild(0).gameObject.SetActive(false); }
+        //foreach (GameObject camera in carsCamerasList)  { camera.gameObject.transform.GetChild(0).gameObject.SetActive(false); }
         foreach (GameObject camera in viewCamerasList)  { camera.SetActive(false); }
         viewCamerasList[indexCameraViewList].SetActive(true);
         textCurrentCamera.text = viewCamerasList[indexCameraViewList].name;
@@ -45,6 +45,7 @@ public class ChangeCamera : MonoBehaviour
         indexCameraViewList += 1;
         if (indexCameraViewList == viewCamerasList.Length)   { indexCameraViewList = 0; }
         
+        Debug.Log(carsCamerasList.Length);
         foreach (GameObject camera in carsCamerasList)  { camera.gameObject.transform.GetChild(0).gameObject.SetActive(false); }
         foreach (GameObject camera in viewCamerasList)  { camera.SetActive(false); }
         viewCamerasList[indexCameraViewList].SetActive(true);
