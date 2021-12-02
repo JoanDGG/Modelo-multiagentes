@@ -154,14 +154,17 @@ public class ModelController : MonoBehaviour
         {
             // Move time from the last frame
             timer += Time.deltaTime;
-            for (int s = 0; s < carsGameObjects.Length; s++)
+            if(carsGameObjects.Length != 0 && oldPositions.Count != 0 && newPositions.Count != 0)
             {
-                Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
-                carsGameObjects[s].transform.localPosition = interpolated;
-                
-                Vector3 dir = oldPositions[s] - newPositions[s];
-                if(dir != new Vector3(0, 0, 0))
-                    carsGameObjects[s].transform.rotation = Quaternion.LookRotation(dir);
+                for (int s = 0; s < carsGameObjects.Length; s++)
+                {
+                    Vector3 interpolated = Vector3.Lerp(oldPositions[s], newPositions[s], dt);
+                    carsGameObjects[s].transform.localPosition = interpolated;
+                    
+                    Vector3 dir = oldPositions[s] - newPositions[s];
+                    if(dir != new Vector3(0, 0, 0))
+                        carsGameObjects[s].transform.rotation = Quaternion.LookRotation(dir);
+                }
             }
         }
     }
@@ -418,26 +421,22 @@ public class ModelController : MonoBehaviour
             trafficLightsData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
             // Recieve tags from json and check for instantiation
 
-            foreach(GameObject trafficLightGameObject in GameObject.FindGameObjectsWithTag("Traffic light")) {
-                Debug.Log(trafficLightGameObject.name);
-                foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
+            foreach(TrafficLightData trafficLightData in trafficLightsData.traffic_light_attributes)
+            {
+                Debug.Log(trafficLightData.unique_id + ", " + trafficLightData.state);
+                GameObject trafficLightGameObject = GameObject.Find(trafficLightData.unique_id);
+                if (trafficLightData.state)
                 {
-                    if (trafficLightData.unique_id == trafficLightGameObject.name && trafficLightData.state)
-                    {
-                        //Update light color to green
-                        trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = Color.green;
-                        Debug.Log(trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color + "for traffic light " + trafficLightData.unique_id);
-
-                    }
-                    else
-                    {
-                        //Update light color to red
-                        trafficLightGameObject.transform.GetChild(0)
-                            .gameObject.GetComponent<Light>().color = Color.red;
-                    }
-                }     
+                    //Update light color to green
+                    trafficLightGameObject.transform.GetChild(0)
+                        .gameObject.GetComponent<Light>().color = Color.green;
+                }
+                else
+                {
+                    //Update light color to red
+                    trafficLightGameObject.transform.GetChild(0)
+                        .gameObject.GetComponent<Light>().color = Color.red;
+                }
             }
         }
         hold = false;
