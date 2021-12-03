@@ -41,3 +41,11 @@ python ServerWeb.py
 - Daniel García Barajas       A01378688
 - Joan Daniel Guerrero García A01378052
 - Luis Ignacio Ferro Salinas  A01378248
+
+## Disclaimers
+It seems that for the simulation of the map with 60 destinations doesn't boot up correctly a very small percentage of the times that it is run. If this happens, try re-openning it a few times, that should be enough to make it work.
+
+### Reading the map
+* If testing a map, running the server locally, the turns of the map should be just like the ones in the original base.txt map. 
+* Don't place destinations in the intersections where there are traffic lights.
+* Don't substitute traffic lights with destinations.
