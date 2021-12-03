@@ -5,8 +5,8 @@ Project in Unity/Flask to model a multi agent behaviour for a car simulation
 # Unity simulation
 ## Instructions to run Unity simulation
 
-- Download the 'Executables' folder
-- Open the zip file for the map you want to open:
+- Open the 'Executables' folder
+- Download the zip file for the map you want to open (depending on wether you have Windows or MacOS):
 
 ```
   - Modelo multiagentes_Mapa grande
@@ -14,7 +14,7 @@ Project in Unity/Flask to model a multi agent behaviour for a car simulation
   - Modelo multiagentes_Mapa pequeño
 ```
 
-- Execute the program 'Modelo multiagentes.exe'
+- Export and execute the program 'Modelo multiagentes.exe'
 
 # Python web server simulation
 ## Setup instructions
@@ -41,7 +41,3 @@ python ServerWeb.py
 - Daniel García Barajas       A01378688
 - Joan Daniel Guerrero García A01378052
 - Luis Ignacio Ferro Salinas  A01378248
-
-# Depenencies:
-
-- For the moment, the program only runs on windows
